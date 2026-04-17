@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
   :root {
     --cream: #f5f0e8;
@@ -39,7 +40,7 @@
   .upload-sub { font-size: 12px; color: var(--text-muted); }
   .input-field { width: 100%; background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; margin-bottom: 1rem; outline: none; transition: border 0.2s; box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
   .input-field:focus { border-color: var(--green); }
-  .input-field::placeholder { color: #b8c9c2; }
+  .input-field::placeholder { color: #1a2e25; }
   .cta-btn { width: 100%; background: var(--green); color: #fff; border: none; border-radius: 10px; padding: 16px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
   .cta-btn:hover { background: var(--green-dark); transform: translateY(-1px); }
   .cta-btn:disabled { background: #c8d8d2; color: #fff; cursor: not-allowed; transform: none; }
@@ -183,8 +184,6 @@
   <span class="back-link" onclick="goBack(1)">← Analyser un autre CV</span>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   let cvText = '', currentFile = null, currentScore = 0, currentPoste = '';
@@ -200,14 +199,23 @@
     document.getElementById('uploadIcon').textContent = '⏳';
     document.getElementById('uploadTitle').textContent = 'Lecture...';
     try {
-      if(file.type === 'application/pdf') { cvText = await extractPDFText(file); }
-      else { cvText = 'CV: ' + file.name; }
+      if(file.type === 'application/pdf') {
+        cvText = await extractPDFText(file);
+      } else if(file.name.endsWith('.docx') || file.name.endsWith('.doc')) {
+        cvText = await extractWordText(file);
+      } else {
+        cvText = 'CV: ' + file.name;
+      }
       document.getElementById('uploadZone').classList.add('has-file');
       document.getElementById('uploadIcon').textContent = '✅';
       document.getElementById('uploadTitle').textContent = file.name;
       document.getElementById('uploadSub').textContent = 'Prêt · Cliquer pour changer';
       checkReady();
-    } catch(e) { document.getElementById('uploadIcon').textContent = '❌'; }
+    } catch(e) {
+      document.getElementById('uploadIcon').textContent = '❌';
+      document.getElementById('uploadTitle').textContent = 'Erreur de lecture';
+      document.getElementById('uploadSub').textContent = 'Réessayez avec un PDF';
+    }
   }
 
   async function extractPDFText(file) {
@@ -220,6 +228,12 @@
       text += content.items.map(item => item.str).join(' ') + '\n';
     }
     return text;
+  }
+
+  async function extractWordText(file) {
+    const ab = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer: ab });
+    return result.value;
   }
 
   document.getElementById('poste').addEventListener('input', checkReady);
