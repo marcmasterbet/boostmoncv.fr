@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BoostMonCV — Votre CV passe-t-il le filtre IA ?</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --cream: #f5f0e8;
+    --card: #fffdf7;
+    --green: #1D9E75;
+    --green-dark: #0f6e56;
+    --blue: #185FA5;
+    --blue-dark: #0c447c;
+    --text: #1a2e25;
+    --text-light: #7a8f85;
+    --text-muted: #a0b5aa;
+    --border: rgba(29,158,117,0.2);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
+  .page { display: none; padding: 2.5rem 1.5rem 4rem; max-width: 580px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* NAV */
+  nav { display: flex; justify-content: center; align-items: center; padding: 1.2rem 1.5rem; border-bottom: 0.5px solid rgba(29,158,117,0.15); background: rgba(245,240,232,0.9); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 100; }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--text); }
+  .logo span { color: var(--green); }
+
+  /* BADGES & TYPO */
+  .badge { display: inline-block; background: rgba(29,158,117,0.13); border: 0.5px solid rgba(29,158,117,0.3); color: var(--green-dark); font-size: 12px; padding: 5px 14px; border-radius: 20px; margin-bottom: 1.5rem; letter-spacing: 0.05em; }
+  h1 { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 1rem; text-align: center; color: #111a16; }
+  h1 span { color: var(--green); }
+  .subtitle { font-size: 15px; color: var(--text-light); max-width: 400px; margin: 0 auto 2rem; line-height: 1.6; text-align: center; }
+
+  /* UPLOAD */
+  .upload-zone { background: var(--card); border: 1.5px dashed rgba(29,158,117,0.35); border-radius: 16px; padding: 2.5rem 2rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.2s; text-align: center; box-shadow: 0 2px 16px rgba(0,0,0,0.05); }
+  .upload-zone:hover { border-color: var(--green); background: #f5fbf7; }
+  .upload-zone.has-file { border-color: var(--green); background: #eef8f3; border-style: solid; }
+  .upload-icon { font-size: 32px; margin-bottom: 0.5rem; }
+  .upload-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 0.3rem; color: #111a16; }
+  .upload-sub { font-size: 12px; color: var(--text-muted); }
+
+  /* INPUTS */
+  .input-field { width: 100%; background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; margin-bottom: 1rem; outline: none; transition: border 0.2s; box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
+  .input-field:focus { border-color: var(--green); }
+  .input-field::placeholder { color: #b8c9c2; }
+
+  /* BOUTONS */
+  .cta-btn { width: 100%; background: var(--green); color: #fff; border: none; border-radius: 10px; padding: 16px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .cta-btn:hover { background: var(--green-dark); transform: translateY(-1px); }
+  .cta-btn:active { transform: scale(0.98); }
+  .cta-btn:disabled { background: #c8d8d2; color: #fff; cursor: not-allowed; transform: none; }
+  .btn-blue { background: var(--blue); }
+  .btn-blue:hover { background: var(--blue-dark); }
+
+  /* TRUST */
+  .trust { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.2rem; flex-wrap: wrap; }
+  .trust-item { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+  .trust-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+  /* LOADING */
+  .loading-screen { text-align: center; padding: 3rem 1rem; }
+  .loading-screen h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .loading-screen p { font-size: 14px; color: var(--text-light); margin-bottom: 2rem; }
+  .progress-bar { width: 100%; height: 6px; background: rgba(29,158,117,0.15); border-radius: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 10px; width: 0%; transition: width 0.3s ease; }
+  .loading-steps { margin-top: 1.5rem; text-align: left; }
+  .step { display: flex; gap: 10px; align-items: center; padding: 8px 0; font-size: 13px; color: var(--text-muted); }
+  .step.done { color: var(--green); }
+  .step.active { color: var(--text); font-weight: 500; }
+  .step-icon { width: 18px; text-align: center; }
+
+  /* RÉSULTAT */
+  .result-header { text-align: center; margin-bottom: 2rem; }
+  .result-header h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 0.3rem; }
+  .result-header p { font-size: 13px; color: var(--text-light); }
+
+  .score-circle { width: 150px; height: 150px; margin: 0 auto 1.5rem; position: relative; }
+  .score-circle svg { transform: rotate(-90deg); }
+  .score-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 800; color: var(--blue); }
+  .score-label { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+
+  .card { background: var(--card); border: 0.5px solid rgba(29,158,117,0.15); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 14px rgba(0,0,0,0.04); }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+  .critique-item { display: flex; gap: 10px; margin-bottom: 0.8rem; align-items: flex-start; }
+  .critique-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); flex-shrink: 0; margin-top: 6px; }
+  .critique-text { font-size: 14px; color: #4a6a5a; line-height: 1.5; }
+
+  .improve-btn { width: 100%; background: var(--green); color: #fff; border: none; border-radius: 12px; padding: 18px; font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-bottom: 0.5rem; }
+  .improve-btn:hover { background: var(--green-dark); transform: translateY(-2px); }
+  .improve-sub { text-align: center; font-size: 12px; color: var(--text-muted); }
+
+  /* OPTIMISATION */
+  .new-score-banner { background: linear-gradient(135deg, rgba(29,158,117,0.1), rgba(24,95,165,0.1)); border: 0.5px solid rgba(29,158,117,0.25); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-around; }
+  .score-before { text-align: center; }
+  .score-after { text-align: center; }
+  .score-arrow { font-size: 1.5rem; color: var(--green); }
+  .score-val { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; }
+  .score-val.old { color: var(--blue); opacity: 0.5; text-decoration: line-through; }
+  .score-val.new { color: var(--green); }
+  .score-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .optimized-content { white-space: pre-wrap; font-size: 13px; line-height: 1.7; color: #2a4a3a; max-height: 300px; overflow-y: auto; }
+
+  .download-btn { width: 100%; background: var(--blue); color: #fff; border: none; border-radius: 12px; padding: 16px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-bottom: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .download-btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
+  .download-btn.green { background: var(--green); }
+  .download-btn.green:hover { background: var(--green-dark); }
+
+  .back-link { display: block; text-align: center; font-size: 12px; color: #b8c9c2; margin-top: 1rem; cursor: pointer; }
+  .back-link:hover { color: var(--text-light); }
+
+  .error-msg { background: rgba(226,75,74,0.08); border: 0.5px solid rgba(226,75,74,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #a32d2d; margin-bottom: 1rem; display: none; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Boost<span>MonCV</span></div>
+</nav>
+
+<!-- PAGE 1 : ACCUEIL -->
+<div class="page active" id="page1">
+  <div style="text-align:center; margin-top:1rem">
+    <div class="badge">Analyse gratuite et instantanée</div>
+  </div>
+  <h1>Votre CV passe-t-il<br><span>le filtre IA ?</span></h1>
+  <p class="subtitle">Analysez votre CV en 30 secondes. Sans inscription, sans email.</p>
+
+  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('cv-upload').click()">
+    <input type="file" id="cv-upload" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display:none" onchange="onFileSelected(this)">
+    <div class="upload-icon" id="uploadIcon">📄</div>
+    <div class="upload-title" id="uploadTitle">Déposez votre CV ici</div>
+    <div class="upload-sub" id="uploadSub">PDF, Word ou photo · Glisser-déposer ou cliquer</div>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <input class="input-field" type="text" id="poste" placeholder="Poste visé — ex: Assistante dentaire, Développeur web...">
+  <button class="cta-btn" id="analyzeBtn" onclick="startAnalysis()" disabled>Analyser mon CV gratuitement</button>
+
+  <div class="trust">
+    <span class="trust-item"><span class="trust-dot"></span>Sans inscription</span>
+    <span class="trust-item"><span class="trust-dot"></span>Résultat immédiat</span>
+    <span class="trust-item"><span class="trust-dot"></span>100% gratuit</span>
+  </div>
+</div>
+
+<!-- PAGE LOADING -->
+<div class="page" id="pageLoading">
+  <div class="loading-screen">
+    <h3>Analyse en cours...</h3>
+    <p>Notre IA examine votre CV en détail</p>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="loading-steps">
+      <div class="step active" id="step1"><span class="step-icon">🔍</span> Lecture du CV</div>
+      <div class="step" id="step2"><span class="step-icon">🎯</span> Analyse des mots-clés</div>
+      <div class="step" id="step3"><span class="step-icon">📊</span> Calcul du score</div>
+      <div class="step" id="step4"><span class="step-icon">✍️</span> Génération de la critique</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2 : RÉSULTAT -->
+<div class="page" id="page2">
+  <div class="result-header">
+    <h2>Analyse de votre CV</h2>
+    <p id="poste-label">Pour le poste de —</p>
+  </div>
+
+  <div class="score-circle">
+    <svg width="150" height="150" viewBox="0 0 150 150">
+      <circle cx="75" cy="75" r="62" fill="none" stroke="rgba(24,95,165,0.1)" stroke-width="10"/>
+      <circle id="scoreArc" cx="75" cy="75" r="62" fill="none" stroke="#185FA5" stroke-width="10" stroke-linecap="round" stroke-dasharray="390" stroke-dashoffset="390"/>
+    </svg>
+    <div class="score-num" id="scoreNum">0</div>
+    <div class="score-label">score sur 100</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Points détectés par l'IA</div>
+    <div id="critiqueList"></div>
+  </div>
+
+  <button class="improve-btn" onclick="startOptimisation()">✨ Améliorer ma note gratuitement →</button>
+  <div class="improve-sub">L'IA va réécrire et optimiser votre CV</div>
+  <span class="back-link" onclick="goBack(1)">← Recommencer</span>
+</div>
+
+<!-- PAGE OPTIMISATION LOADING -->
+<div class="page" id="pageOptLoading">
+  <div class="loading-screen">
+    <h3>Optimisation en cours...</h3>
+    <p>L'IA réécrit votre CV et rédige votre lettre</p>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill2"></div></div>
+    <div class="loading-steps">
+      <div class="step active" id="opt1"><span class="step-icon">🧠</span> Analyse des points faibles</div>
+      <div class="step" id="opt2"><span class="step-icon">✍️</span> Réécriture du CV</div>
+      <div class="step" id="opt3"><span class="step-icon">📝</span> Rédaction de la lettre de motivation</div>
+      <div class="step" id="opt4"><span class="step-icon">📄</span> Préparation du PDF</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3 : RÉSULTAT OPTIMISÉ -->
+<div class="page" id="page3">
+  <div class="result-header">
+    <h2>Votre CV est optimisé !</h2>
+    <p>Prêt à faire la différence</p>
+  </div>
+
+  <div class="new-score-banner">
+    <div class="score-before">
+      <div class="score-val old" id="oldScoreDisplay">—</div>
+      <div class="score-lbl">Score initial</div>
+    </div>
+    <div class="score-arrow">→</div>
+    <div class="score-after">
+      <div class="score-val new" id="newScoreDisplay">—</div>
+      <div class="score-lbl">Nouveau score</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">CV optimisé</div>
+    <div class="optimized-content" id="optimizedCV"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Lettre de motivation</div>
+    <div class="optimized-content" id="optimizedLetter"></div>
+  </div>
+
+  <button class="download-btn green" onclick="downloadCV()">⬇ Télécharger mon CV optimisé (PDF)</button>
+  <button class="download-btn" onclick="downloadLetter()">⬇ Télécharger ma lettre de motivation (PDF)</button>
+
+  <span class="back-link" onclick="goBack(1)">← Analyser un autre CV</span>
+</div>
+
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  let cvText = '';
+  let currentFile = null;
+  let currentScore = 0;
+  let currentPoste = '';
+
+  // DRAG & DROP
+  const uploadZone = document.getElementById('uploadZone');
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor = '#1D9E75'; });
+  uploadZone.addEventListener('dragleave', () => { uploadZone.style.borderColor = ''; });
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+
+  function onFileSelected(input) {
+    if (input.files && input.files[0]) handleFile(input.files[0]);
+  }
+
+  async function handleFile(file) {
+    currentFile = file;
+    document.getElementById('uploadIcon').textContent = '⏳';
+    document.getElementById('uploadTitle').textContent = 'Lecture du fichier...';
+    document.getElementById('uploadSub').textContent = file.name;
+
+    try {
+      if (file.type === 'application/pdf') {
+        cvText = await extractPDFText(file);
+      } else if (file.type.startsWith('image/')) {
+        cvText = 'CV image: ' + file.name;
+      } else {
+        cvText = 'CV document: ' + file.name;
+      }
+      document.getElementById('uploadZone').classList.add('has-file');
+      document.getElementById('uploadIcon').textContent = '✅';
+      document.getElementById('uploadTitle').textContent = file.name;
+      document.getElementById('uploadSub').textContent = 'Fichier prêt · Cliquer pour changer';
+      checkReady();
+    } catch(e) {
+      document.getElementById('uploadIcon').textContent = '❌';
+      document.getElementById('uploadTitle').textContent = 'Erreur de lecture';
+      document.getElementById('uploadSub').textContent = 'Réessayez avec un autre fichier';
+    }
+  }
+
+  async function extractPDFText(file) {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+    let text = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(item => item.str).join(' ') + '\n';
+    }
+    return text;
+  }
+
+  document.getElementById('poste').addEventListener('input', checkReady);
+
+  function checkReady() {
+    const poste = document.getElementById('poste').value.trim();
+    document.getElementById('analyzeBtn').disabled = !(currentFile && poste.length > 2);
+  }
+
+  async function startAnalysis() {
+    currentPoste = document.getElementById('poste').value.trim();
+    showPage('pageLoading');
+    animateLoading(['step1','step2','step3','step4'], 'progressFill', 2500, () => runAnalysis());
+  }
+
+  async function runAnalysis() {
+    try {
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cvText, poste: currentPoste })
+      });
+      const data = await response.json();
+      currentScore = data.score;
+      showResult(data);
+    } catch(e) {
+      showError('Erreur lors de l\'analyse. Veuillez réessayer.');
+      showPage('page1');
+    }
+  }
+
+  function showResult(data) {
+    document.getElementById('poste-label').textContent = 'Pour le poste de ' + currentPoste;
+    const list = document.getElementById('critiqueList');
+    list.innerHTML = '';
+    data.critiques.forEach(c => {
+      list.innerHTML += `<div class="critique-item"><div class="critique-dot"></div><div class="critique-text">${c}</div></div>`;
+    });
+    showPage('page2');
+    animateScore(data.score);
+  }
+
+  function animateScore(target) {
+    let current = 0;
+    const circ = 2 * Math.PI * 62;
+    const interval = setInterval(() => {
+      current++;
+      document.getElementById('scoreNum').textContent = current;
+      document.getElementById('scoreArc').setAttribute('stroke-dashoffset', circ - (circ * current / 100));
+      if (current >= target) clearInterval(interval);
+    }, 20);
+  }
+
+  async function startOptimisation() {
+    showPage('pageOptLoading');
+    animateLoading(['opt1','opt2','opt3','opt4'], 'progressFill2', 4000, () => runOptimisation());
+  }
+
+  async function runOptimisation() {
+    try {
+      const response = await fetch('/api/optimize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cvText, poste: currentPoste, score: currentScore })
+      });
+      const data = await response.json();
+      document.getElementById('oldScoreDisplay').textContent = currentScore + '/100';
+      document.getElementById('newScoreDisplay').textContent = data.newScore + '/100';
+      document.getElementById('optimizedCV').textContent = data.cvOptimise;
+      document.getElementById('optimizedLetter').textContent = data.lettre;
+      showPage('page3');
+    } catch(e) {
+      showError('Erreur lors de l\'optimisation. Veuillez réessayer.');
+      showPage('page2');
+    }
+  }
+
+  function downloadCV() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const text = document.getElementById('optimizedCV').textContent;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    const lines = doc.splitTextToSize(text, 180);
+    doc.text(lines, 15, 20);
+    doc.save('CV_optimise_' + currentPoste.replace(/ /g,'_') + '.pdf');
+  }
+
+  function downloadLetter() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const text = document.getElementById('optimizedLetter').textContent;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    const lines = doc.splitTextToSize(text, 180);
+    doc.text(lines, 15, 20);
+    doc.save('Lettre_motivation_' + currentPoste.replace(/ /g,'_') + '.pdf');
+  }
+
+  function animateLoading(steps, progressId, duration, callback) {
+    const interval = duration / steps.length;
+    steps.forEach((id, i) => {
+      setTimeout(() => {
+        steps.forEach(s => document.getElementById(s).className = 'step');
+        if (i > 0) document.getElementById(steps[i-1]).className = 'step done';
+        document.getElementById(id).className = 'step active';
+        const pct = ((i+1) / steps.length) * 100;
+        document.getElementById(progressId).style.width = pct + '%';
+      }, i * interval);
+    });
+    setTimeout(() => {
+      steps.forEach(s => document.getElementById(s).className = 'step done');
+      document.getElementById(progressId).style.width = '100%';
+      setTimeout(callback, 300);
+    }, duration);
+  }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function goBack(n) {
+    if (n === 1) { showPage('page1'); document.getElementById('analyzeBtn').textContent = 'Analyser mon CV gratuitement'; document.getElementById('analyzeBtn').disabled = false; }
+    else showPage('page' + n);
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 4000);
+  }
+</script>
+</body>
+</html>
