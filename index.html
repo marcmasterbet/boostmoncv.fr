@@ -82,6 +82,13 @@
   .download-btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
   .download-btn.green { background: var(--green); }
   .download-btn.green:hover { background: var(--green-dark); }
+  .design-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .design-card { background: var(--card); border: 2px solid transparent; border-radius: 12px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .design-card:hover { border-color: var(--green); }
+  .design-card.selected { border-color: var(--green); background: #eef8f3; }
+  .design-card .design-preview { font-size: 28px; margin-bottom: 0.4rem; }
+  .design-card .design-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); }
+  .design-card .design-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
   .back-link { display: block; text-align: center; font-size: 13px; color: var(--green-dark); margin-top: 1rem; cursor: pointer; text-decoration: underline; font-weight: 500; }
   .error-msg { background: rgba(226,75,74,0.08); border: 0.5px solid rgba(226,75,74,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #a32d2d; margin-bottom: 1rem; display: none; }
 </style>
@@ -179,6 +186,23 @@
     <div class="card-title">Lettre de motivation</div>
     <div class="optimized-content" id="optimizedLetter"></div>
   </div>
+
+  <div class="card">
+    <div class="card-title">Choisissez votre design de CV</div>
+    <div class="design-choice">
+      <div class="design-card selected" id="design1" onclick="selectDesign(1)">
+        <div class="design-preview">🌿</div>
+        <div class="design-name">Élégant</div>
+        <div class="design-desc">Sobre & professionnel</div>
+      </div>
+      <div class="design-card" id="design2" onclick="selectDesign(2)">
+        <div class="design-preview">⚡</div>
+        <div class="design-name">Moderne</div>
+        <div class="design-desc">Dynamique & créatif</div>
+      </div>
+    </div>
+  </div>
+
   <button class="download-btn green" onclick="downloadCV()">⬇ Télécharger mon CV optimisé (PDF)</button>
   <button class="download-btn" onclick="downloadLetter()">⬇ Télécharger ma lettre de motivation (PDF)</button>
   <span class="back-link" onclick="goBack(1)">← Analyser un autre CV</span>
@@ -186,7 +210,7 @@
 
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  let cvText = '', currentFile = null, currentScore = 0, currentPoste = '';
+  let cvText = '', currentFile = null, currentScore = 0, currentPoste = '', selectedDesign = 1;
 
   const uploadZone = document.getElementById('uploadZone');
   uploadZone.addEventListener('dragover', e => { e.preventDefault(); });
@@ -242,6 +266,12 @@
     document.getElementById('analyzeBtn').disabled = !(currentFile && p.length > 2);
   }
 
+  function selectDesign(n) {
+    selectedDesign = n;
+    document.getElementById('design1').classList.toggle('selected', n === 1);
+    document.getElementById('design2').classList.toggle('selected', n === 2);
+  }
+
   async function startAnalysis() {
     currentPoste = document.getElementById('poste').value.trim();
     showPage('pageLoading');
@@ -290,20 +320,231 @@
     } catch(e) { showPage('page2'); }
   }
 
+  function parseCVSections(text) {
+    const lines = text.split('\n').filter(l => l.trim());
+    const sections = {};
+    let currentSection = 'intro';
+    sections[currentSection] = [];
+    const sectionKeywords = ['profil','expérience','expériences','compétence','compétences','formation','éducation','langues','loisirs','centres'];
+    lines.forEach(line => {
+      const lower = line.toLowerCase().trim();
+      const isSection = sectionKeywords.some(k => lower.includes(k)) && line.length < 40;
+      if(isSection) {
+        currentSection = lower;
+        sections[currentSection] = [];
+      } else {
+        if(!sections[currentSection]) sections[currentSection] = [];
+        sections[currentSection].push(line.trim());
+      }
+    });
+    return sections;
+  }
+
   function downloadCV() {
-    const {jsPDF} = window.jspdf;
-    const doc = new jsPDF();
-    const lines = doc.splitTextToSize(document.getElementById('optimizedCV').textContent, 180);
-    doc.setFontSize(11); doc.text(lines, 15, 20);
-    doc.save('CV_optimise.pdf');
+    const { jsPDF } = window.jspdf;
+    const text = document.getElementById('optimizedCV').textContent;
+    const lines = text.split('\n').filter(l => l.trim());
+    const nom = lines[0] || 'Candidat';
+    const posteLabel = lines[1] || currentPoste;
+
+    if(selectedDesign === 1) {
+      // DESIGN 1 — ÉLÉGANT (vert)
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+      const W = 210, H = 297;
+
+      // Bande verte en-tête
+      doc.setFillColor(29, 158, 117);
+      doc.rect(0, 0, W, 45, 'F');
+
+      // Nom
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22);
+      doc.setFont('helvetica', 'bold');
+      doc.text(nom, 15, 20);
+
+      // Poste
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text(posteLabel, 15, 30);
+
+      // Ligne décorative
+      doc.setDrawColor(255, 255, 255);
+      doc.setLineWidth(0.5);
+      doc.line(15, 35, 195, 35);
+
+      // Contenu
+      doc.setTextColor(30, 46, 37);
+      let y = 58;
+      lines.slice(2).forEach(line => {
+        if(y > 275) { doc.addPage(); y = 20; }
+        const isTitre = line.length < 35 && line === line.toUpperCase() || ['PROFIL','EXPÉRIENCE','COMPÉTENCE','FORMATION','LANGUE'].some(k => line.toUpperCase().includes(k));
+        if(isTitre) {
+          y += 4;
+          doc.setFillColor(29, 158, 117);
+          doc.rect(15, y-4, 3, 6, 'F');
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          doc.setTextColor(29, 158, 117);
+          doc.text(line, 21, y);
+          doc.setDrawColor(220, 235, 228);
+          doc.setLineWidth(0.3);
+          doc.line(21, y+2, 195, y+2);
+          y += 8;
+          doc.setTextColor(30, 46, 37);
+        } else {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          doc.setTextColor(60, 80, 70);
+          const wrapped = doc.splitTextToSize('• ' + line, 175);
+          doc.text(wrapped, 18, y);
+          y += wrapped.length * 5 + 2;
+        }
+      });
+
+      // Pied de page
+      doc.setFillColor(245, 240, 232);
+      doc.rect(0, 285, W, 12, 'F');
+      doc.setFontSize(8);
+      doc.setTextColor(160, 181, 170);
+      doc.text('Optimisé par BoostMonCV.fr', W/2, 292, { align: 'center' });
+
+      doc.save('CV_Elegant_' + nom.replace(/ /g,'_') + '.pdf');
+
+    } else {
+      // DESIGN 2 — MODERNE (bleu)
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+      const W = 210;
+
+      // Colonne gauche bleue
+      doc.setFillColor(24, 95, 165);
+      doc.rect(0, 0, 65, 297, 'F');
+
+      // Cercle initiales
+      doc.setFillColor(255, 255, 255);
+      doc.circle(32, 35, 20, 'F');
+      doc.setTextColor(24, 95, 165);
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      const initiales = nom.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
+      doc.text(initiales, 32, 40, { align: 'center' });
+
+      // Nom colonne gauche
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      const nomLines = doc.splitTextToSize(nom, 55);
+      doc.text(nomLines, 32, 65, { align: 'center' });
+
+      // Poste colonne gauche
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(179, 212, 244);
+      const posteLines = doc.splitTextToSize(posteLabel, 55);
+      doc.text(posteLines, 32, 75, { align: 'center' });
+
+      // Ligne séparateur colonne gauche
+      doc.setDrawColor(255, 255, 255, 0.3);
+      doc.setLineWidth(0.3);
+      doc.line(10, 85, 55, 85);
+
+      // Contenu colonne droite
+      doc.setTextColor(30, 46, 37);
+      let y = 20;
+      let leftY = 95;
+
+      lines.slice(2).forEach(line => {
+        const isTitre = line.length < 35 && ['PROFIL','EXPÉRIENCE','COMPÉTENCE','FORMATION','LANGUE','LOISIR'].some(k => line.toUpperCase().includes(k));
+        const isLeftSection = ['COMPÉTENCE','LANGUE','LOISIR'].some(k => line.toUpperCase().includes(k));
+
+        if(isTitre && isLeftSection) {
+          leftY += 6;
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(9);
+          doc.setTextColor(255, 255, 255);
+          doc.text(line.toUpperCase(), 10, leftY);
+          leftY += 4;
+          doc.setDrawColor(179, 212, 244);
+          doc.line(10, leftY, 55, leftY);
+          leftY += 5;
+        } else if(isTitre) {
+          if(y > 270) { doc.addPage(); y = 20; }
+          y += 4;
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(12);
+          doc.setTextColor(24, 95, 165);
+          doc.text(line, 75, y);
+          y += 2;
+          doc.setDrawColor(24, 95, 165);
+          doc.setLineWidth(0.5);
+          doc.line(75, y, 195, y);
+          y += 7;
+        } else if(leftY < 250 && isLeftSection) {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(8);
+          doc.setTextColor(200, 220, 240);
+          doc.text('• ' + line, 10, leftY);
+          leftY += 5;
+        } else {
+          if(y > 270) { doc.addPage(); y = 20; }
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          doc.setTextColor(60, 80, 70);
+          const wrapped = doc.splitTextToSize(line, 115);
+          doc.text(wrapped, 75, y);
+          y += wrapped.length * 5 + 2;
+        }
+      });
+
+      // Pied de page
+      doc.setFillColor(245, 240, 232);
+      doc.rect(65, 285, 145, 12, 'F');
+      doc.setFontSize(8);
+      doc.setTextColor(160, 181, 170);
+      doc.text('Optimisé par BoostMonCV.fr', 137, 292, { align: 'center' });
+
+      doc.save('CV_Moderne_' + nom.replace(/ /g,'_') + '.pdf');
+    }
   }
 
   function downloadLetter() {
-    const {jsPDF} = window.jspdf;
-    const doc = new jsPDF();
-    const lines = doc.splitTextToSize(document.getElementById('optimizedLetter').textContent, 180);
-    doc.setFontSize(11); doc.text(lines, 15, 20);
-    doc.save('Lettre_motivation.pdf');
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const text = document.getElementById('optimizedLetter').textContent;
+    const W = 210;
+
+    // En-tête
+    doc.setFillColor(29, 158, 117);
+    doc.rect(0, 0, W, 25, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Lettre de motivation', 15, 16);
+
+    // Poste
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Poste : ' + currentPoste, W - 15, 16, { align: 'right' });
+
+    // Contenu
+    doc.setTextColor(30, 46, 37);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    const lines = doc.splitTextToSize(text, 175);
+    let y = 40;
+    lines.forEach(line => {
+      if(y > 275) { doc.addPage(); y = 20; }
+      doc.text(line, 18, y);
+      y += 7;
+    });
+
+    // Pied de page
+    doc.setFillColor(245, 240, 232);
+    doc.rect(0, 285, W, 12, 'F');
+    doc.setFontSize(8);
+    doc.setTextColor(160, 181, 170);
+    doc.text('Optimisé par BoostMonCV.fr', W/2, 292, { align: 'center' });
+
+    doc.save('Lettre_motivation_' + currentPoste.replace(/ /g,'_') + '.pdf');
   }
 
   function animateLoading(steps, progressId, duration, callback) {
