@@ -186,9 +186,8 @@
     <div class="card-title">Lettre de motivation</div>
     <div class="optimized-content" id="optimizedLetter"></div>
   </div>
-
   <div class="card">
-    <div class="card-title">Choisissez votre design de CV</div>
+    <div class="card-title">Choisissez votre design</div>
     <div class="design-choice">
       <div class="design-card selected" id="design1" onclick="selectDesign(1)">
         <div class="design-preview">🌿</div>
@@ -202,7 +201,6 @@
       </div>
     </div>
   </div>
-
   <button class="download-btn green" onclick="downloadCV()">⬇ Télécharger mon CV optimisé (PDF)</button>
   <button class="download-btn" onclick="downloadLetter()">⬇ Télécharger ma lettre de motivation (PDF)</button>
   <span class="back-link" onclick="goBack(1)">← Analyser un autre CV</span>
@@ -320,231 +318,202 @@
     } catch(e) { showPage('page2'); }
   }
 
-  function parseCVSections(text) {
-    const lines = text.split('\n').filter(l => l.trim());
-    const sections = {};
-    let currentSection = 'intro';
-    sections[currentSection] = [];
-    const sectionKeywords = ['profil','expérience','expériences','compétence','compétences','formation','éducation','langues','loisirs','centres'];
-    lines.forEach(line => {
-      const lower = line.toLowerCase().trim();
-      const isSection = sectionKeywords.some(k => lower.includes(k)) && line.length < 40;
-      if(isSection) {
-        currentSection = lower;
-        sections[currentSection] = [];
-      } else {
-        if(!sections[currentSection]) sections[currentSection] = [];
-        sections[currentSection].push(line.trim());
-      }
-    });
-    return sections;
-  }
-
   function downloadCV() {
     const { jsPDF } = window.jspdf;
     const text = document.getElementById('optimizedCV').textContent;
-    const lines = text.split('\n').filter(l => l.trim());
-    const nom = lines[0] || 'Candidat';
-    const posteLabel = lines[1] || currentPoste;
+    const allLines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const nom = allLines[0] || 'Candidat';
+    const posteLabel = allLines[1] || currentPoste;
+    const contentLines = allLines.slice(2);
+
+    const SECTIONS = ['PROFIL','EXPÉRIENCES','EXPÉRIENCE','COMPÉTENCES','COMPÉTENCE','FORMATION','LANGUES','LANGUE','LOISIRS','CENTRES'];
+    const isSection = line => SECTIONS.some(s => line.toUpperCase().includes(s)) && line.length < 50;
 
     if(selectedDesign === 1) {
-      // DESIGN 1 — ÉLÉGANT (vert)
-      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-      const W = 210, H = 297;
-
-      // Bande verte en-tête
-      doc.setFillColor(29, 158, 117);
-      doc.rect(0, 0, W, 45, 'F');
-
-      // Nom
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(22);
-      doc.setFont('helvetica', 'bold');
-      doc.text(nom, 15, 20);
-
-      // Poste
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'normal');
-      doc.text(posteLabel, 15, 30);
-
-      // Ligne décorative
-      doc.setDrawColor(255, 255, 255);
-      doc.setLineWidth(0.5);
-      doc.line(15, 35, 195, 35);
-
-      // Contenu
-      doc.setTextColor(30, 46, 37);
-      let y = 58;
-      lines.slice(2).forEach(line => {
-        if(y > 275) { doc.addPage(); y = 20; }
-        const isTitre = line.length < 35 && line === line.toUpperCase() || ['PROFIL','EXPÉRIENCE','COMPÉTENCE','FORMATION','LANGUE'].some(k => line.toUpperCase().includes(k));
-        if(isTitre) {
-          y += 4;
-          doc.setFillColor(29, 158, 117);
-          doc.rect(15, y-4, 3, 6, 'F');
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(11);
-          doc.setTextColor(29, 158, 117);
-          doc.text(line, 21, y);
-          doc.setDrawColor(220, 235, 228);
-          doc.setLineWidth(0.3);
-          doc.line(21, y+2, 195, y+2);
-          y += 8;
-          doc.setTextColor(30, 46, 37);
-        } else {
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(10);
-          doc.setTextColor(60, 80, 70);
-          const wrapped = doc.splitTextToSize('• ' + line, 175);
-          doc.text(wrapped, 18, y);
-          y += wrapped.length * 5 + 2;
-        }
-      });
-
-      // Pied de page
-      doc.setFillColor(245, 240, 232);
-      doc.rect(0, 285, W, 12, 'F');
-      doc.setFontSize(8);
-      doc.setTextColor(160, 181, 170);
-      doc.text('Optimisé par BoostMonCV.fr', W/2, 292, { align: 'center' });
-
-      doc.save('CV_Elegant_' + nom.replace(/ /g,'_') + '.pdf');
-
-    } else {
-      // DESIGN 2 — MODERNE (bleu)
+      // DESIGN ÉLÉGANT — vert
       const doc = new jsPDF({ unit: 'mm', format: 'a4' });
       const W = 210;
 
-      // Colonne gauche bleue
-      doc.setFillColor(24, 95, 165);
-      doc.rect(0, 0, 65, 297, 'F');
-
-      // Cercle initiales
-      doc.setFillColor(255, 255, 255);
-      doc.circle(32, 35, 20, 'F');
-      doc.setTextColor(24, 95, 165);
+      // En-tête vert
+      doc.setFillColor(29, 158, 117);
+      doc.rect(0, 0, W, 38, 'F');
+      doc.setTextColor(255,255,255);
+      doc.setFont('helvetica','bold');
       doc.setFontSize(18);
-      doc.setFont('helvetica', 'bold');
-      const initiales = nom.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
-      doc.text(initiales, 32, 40, { align: 'center' });
-
-      // Nom colonne gauche
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      const nomLines = doc.splitTextToSize(nom, 55);
-      doc.text(nomLines, 32, 65, { align: 'center' });
-
-      // Poste colonne gauche
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(179, 212, 244);
-      const posteLines = doc.splitTextToSize(posteLabel, 55);
-      doc.text(posteLines, 32, 75, { align: 'center' });
-
-      // Ligne séparateur colonne gauche
-      doc.setDrawColor(255, 255, 255, 0.3);
+      doc.text(nom, 14, 16);
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(10);
+      doc.text(posteLabel, 14, 26);
+      doc.setDrawColor(255,255,255);
       doc.setLineWidth(0.3);
-      doc.line(10, 85, 55, 85);
+      doc.line(14, 31, 196, 31);
 
-      // Contenu colonne droite
-      doc.setTextColor(30, 46, 37);
-      let y = 20;
-      let leftY = 95;
-
-      lines.slice(2).forEach(line => {
-        const isTitre = line.length < 35 && ['PROFIL','EXPÉRIENCE','COMPÉTENCE','FORMATION','LANGUE','LOISIR'].some(k => line.toUpperCase().includes(k));
-        const isLeftSection = ['COMPÉTENCE','LANGUE','LOISIR'].some(k => line.toUpperCase().includes(k));
-
-        if(isTitre && isLeftSection) {
-          leftY += 6;
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(9);
-          doc.setTextColor(255, 255, 255);
-          doc.text(line.toUpperCase(), 10, leftY);
-          leftY += 4;
-          doc.setDrawColor(179, 212, 244);
-          doc.line(10, leftY, 55, leftY);
-          leftY += 5;
-        } else if(isTitre) {
-          if(y > 270) { doc.addPage(); y = 20; }
-          y += 4;
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(12);
-          doc.setTextColor(24, 95, 165);
-          doc.text(line, 75, y);
+      let y = 46;
+      contentLines.forEach(line => {
+        if(y > 280) return;
+        const clean = line.replace(/^[-*•·]\s*/, '');
+        if(isSection(clean)) {
           y += 2;
-          doc.setDrawColor(24, 95, 165);
-          doc.setLineWidth(0.5);
-          doc.line(75, y, 195, y);
+          doc.setFillColor(29,158,117);
+          doc.rect(14, y-3.5, 2.5, 5.5, 'F');
+          doc.setFont('helvetica','bold');
+          doc.setFontSize(9);
+          doc.setTextColor(29,158,117);
+          doc.text(clean.toUpperCase(), 19, y);
+          doc.setDrawColor(200,235,220);
+          doc.setLineWidth(0.2);
+          doc.line(19, y+1.5, 196, y+1.5);
           y += 7;
-        } else if(leftY < 250 && isLeftSection) {
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(8);
-          doc.setTextColor(200, 220, 240);
-          doc.text('• ' + line, 10, leftY);
-          leftY += 5;
         } else {
-          if(y > 270) { doc.addPage(); y = 20; }
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(10);
-          doc.setTextColor(60, 80, 70);
-          const wrapped = doc.splitTextToSize(line, 115);
-          doc.text(wrapped, 75, y);
-          y += wrapped.length * 5 + 2;
+          doc.setFont('helvetica','normal');
+          doc.setFontSize(9);
+          doc.setTextColor(50,70,60);
+          const wrapped = doc.splitTextToSize(clean, 178);
+          if(y + wrapped.length * 4.5 > 282) return;
+          doc.text(wrapped, 14, y);
+          y += wrapped.length * 4.5 + 1.5;
         }
       });
 
-      // Pied de page
-      doc.setFillColor(245, 240, 232);
-      doc.rect(65, 285, 145, 12, 'F');
-      doc.setFontSize(8);
-      doc.setTextColor(160, 181, 170);
-      doc.text('Optimisé par BoostMonCV.fr', 137, 292, { align: 'center' });
+      // Pied
+      doc.setFillColor(245,240,232);
+      doc.rect(0, 287, W, 10, 'F');
+      doc.setFontSize(7);
+      doc.setTextColor(160,181,170);
+      doc.text('BoostMonCV.fr', W/2, 293, { align:'center' });
 
-      doc.save('CV_Moderne_' + nom.replace(/ /g,'_') + '.pdf');
+      doc.save('CV_Elegant.pdf');
+
+    } else {
+      // DESIGN MODERNE — bleu colonne
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+      const W = 210;
+      const colW = 60;
+
+      // Colonne gauche
+      doc.setFillColor(24,95,165);
+      doc.rect(0, 0, colW, 297, 'F');
+
+      // Initiales cercle
+      doc.setFillColor(255,255,255);
+      doc.circle(colW/2, 28, 16, 'F');
+      const initiales = nom.split(' ').map(n=>n[0]||'').join('').slice(0,2).toUpperCase();
+      doc.setTextColor(24,95,165);
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(14);
+      doc.text(initiales, colW/2, 32, { align:'center' });
+
+      // Nom & poste colonne gauche
+      doc.setTextColor(255,255,255);
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(9);
+      const nomW = doc.splitTextToSize(nom, colW-8);
+      doc.text(nomW, colW/2, 52, { align:'center' });
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(8);
+      doc.setTextColor(180,210,240);
+      const posteW = doc.splitTextToSize(posteLabel, colW-8);
+      doc.text(posteW, colW/2, 52 + nomW.length*5 + 2, { align:'center' });
+
+      // Séparateur
+      doc.setDrawColor(255,255,255);
+      doc.setLineWidth(0.2);
+      doc.line(8, 75, colW-8, 75);
+
+      // Colonne droite — contenu
+      let y = 20;
+      let leftY = 82;
+      const leftSections = ['COMPÉTENCE','LANGUE','LOISIR','CENTRE'];
+      const isLeftSection = line => leftSections.some(s => line.toUpperCase().includes(s));
+
+      contentLines.forEach(line => {
+        const clean = line.replace(/^[-*•·]\s*/, '');
+        if(isSection(clean) && isLeftSection(clean)) {
+          if(leftY > 270) return;
+          doc.setFont('helvetica','bold');
+          doc.setFontSize(8);
+          doc.setTextColor(255,255,255);
+          doc.text(clean.toUpperCase(), 6, leftY);
+          leftY += 2;
+          doc.setDrawColor(180,210,240);
+          doc.setLineWidth(0.2);
+          doc.line(6, leftY, colW-4, leftY);
+          leftY += 5;
+        } else if(!isSection(clean) && leftY < 265 && y < 30) {
+          doc.setFont('helvetica','normal');
+          doc.setFontSize(8);
+          doc.setTextColor(200,225,245);
+          const lw = doc.splitTextToSize(clean, colW-10);
+          doc.text(lw, 6, leftY);
+          leftY += lw.length * 4 + 1;
+        } else if(isSection(clean)) {
+          if(y > 278) return;
+          y += 3;
+          doc.setFont('helvetica','bold');
+          doc.setFontSize(10);
+          doc.setTextColor(24,95,165);
+          doc.text(clean, colW+6, y);
+          y += 1.5;
+          doc.setDrawColor(24,95,165);
+          doc.setLineWidth(0.4);
+          doc.line(colW+6, y, 196, y);
+          y += 6;
+        } else {
+          if(y > 278) return;
+          doc.setFont('helvetica','normal');
+          doc.setFontSize(9);
+          doc.setTextColor(50,70,60);
+          const wrapped = doc.splitTextToSize(clean, 125);
+          doc.text(wrapped, colW+6, y);
+          y += wrapped.length * 4.5 + 1.5;
+        }
+      });
+
+      // Pied
+      doc.setFillColor(245,240,232);
+      doc.rect(colW, 287, W-colW, 10, 'F');
+      doc.setFontSize(7);
+      doc.setTextColor(160,181,170);
+      doc.text('BoostMonCV.fr', (colW+W)/2, 293, { align:'center' });
+
+      doc.save('CV_Moderne.pdf');
     }
   }
 
   function downloadLetter() {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const doc = new jsPDF({ unit:'mm', format:'a4' });
     const text = document.getElementById('optimizedLetter').textContent;
     const W = 210;
 
-    // En-tête
-    doc.setFillColor(29, 158, 117);
-    doc.rect(0, 0, W, 25, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Lettre de motivation', 15, 16);
+    doc.setFillColor(29,158,117);
+    doc.rect(0, 0, W, 22, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(13);
+    doc.text('Lettre de motivation', 14, 14);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(9);
+    doc.text(currentPoste, W-14, 14, { align:'right' });
 
-    // Poste
+    doc.setTextColor(40,60,50);
     doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Poste : ' + currentPoste, W - 15, 16, { align: 'right' });
-
-    // Contenu
-    doc.setTextColor(30, 46, 37);
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    const lines = doc.splitTextToSize(text, 175);
-    let y = 40;
+    doc.setFont('helvetica','normal');
+    const lines = doc.splitTextToSize(text, 178);
+    let y = 35;
     lines.forEach(line => {
-      if(y > 275) { doc.addPage(); y = 20; }
-      doc.text(line, 18, y);
-      y += 7;
+      if(y > 278) { doc.addPage(); y = 20; }
+      doc.text(line, 16, y);
+      y += 6;
     });
 
-    // Pied de page
-    doc.setFillColor(245, 240, 232);
-    doc.rect(0, 285, W, 12, 'F');
-    doc.setFontSize(8);
-    doc.setTextColor(160, 181, 170);
-    doc.text('Optimisé par BoostMonCV.fr', W/2, 292, { align: 'center' });
+    doc.setFillColor(245,240,232);
+    doc.rect(0, 287, W, 10, 'F');
+    doc.setFontSize(7);
+    doc.setTextColor(160,181,170);
+    doc.text('BoostMonCV.fr', W/2, 293, { align:'center' });
 
-    doc.save('Lettre_motivation_' + currentPoste.replace(/ /g,'_') + '.pdf');
+    doc.save('Lettre_motivation.pdf');
   }
 
   function animateLoading(steps, progressId, duration, callback) {
