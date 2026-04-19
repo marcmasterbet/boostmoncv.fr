@@ -15,45 +15,60 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
-        max_tokens: 1200,
+        max_tokens: 2000,
         messages: [
-          { role: 'system', content: 'Tu es un expert RH. Tu réponds UNIQUEMENT avec le contenu demandé, sans commentaires.' },
+          { role: 'system', content: 'Tu es un expert RH et rédacteur de CV professionnel haut de gamme. Tu crées des CV complets, détaillés et percutants.' },
           {
             role: 'user',
-            content: `Réécris ce CV pour le poste de "${poste}". 
+            content: `Réécris et optimise en profondeur ce CV pour le poste de "${poste}".
 
 CV original :
-${cvText || 'Génère un CV type pour ce poste'}
+${cvText}
 
-IMPORTANT - Formate EXACTEMENT comme ceci, avec ces titres en majuscules :
+INSTRUCTIONS IMPORTANTES :
+- Garde TOUTES les informations du CV original (expériences, dates, entreprises, formations, compétences, langues)
+- Enrichis et développe chaque expérience avec des détails percutants et des verbes d'action forts
+- Ajoute des résultats concrets et chiffrés quand possible
+- Intègre les mots-clés importants pour le poste de ${poste}
+- Le CV doit être COMPLET et DÉTAILLÉ, pas une version résumée
+
+Format EXACT à respecter (titres en majuscules, pas de puces ni étoiles) :
 
 NOM PRENOM
 ${poste}
+Email | Téléphone | Ville
 
-PROFIL
-2-3 phrases percutantes sur le candidat en lien avec le poste.
+PROFIL PROFESSIONNEL
+3-4 phrases percutantes qui valorisent le candidat pour le poste de ${poste}.
 
 EXPÉRIENCES PROFESSIONNELLES
-Titre du poste - Entreprise - Année
-Description courte en 1-2 lignes maximum.
 
-Titre du poste - Entreprise - Année
-Description courte en 1-2 lignes maximum.
+Titre du poste — Entreprise — Ville — Date début à Date fin
+Description détaillée de 3-4 lignes minimum avec missions précises, responsabilités, résultats obtenus et compétences utilisées.
 
-COMPÉTENCES
-Compétence 1, Compétence 2, Compétence 3, Compétence 4, Compétence 5
+Titre du poste — Entreprise — Ville — Date début à Date fin  
+Description détaillée de 3-4 lignes minimum.
+
+COMPÉTENCES CLÉS
+Compétence 1, Compétence 2, Compétence 3, Compétence 4, Compétence 5, Compétence 6, Compétence 7, Compétence 8
 
 FORMATION
-Diplôme - Établissement - Année
+
+Diplôme — Établissement — Ville — Année
+Description ou spécialité si pertinente.
 
 LANGUES
-Langue - Niveau
+Langue 1 — Niveau (ex: Courant, Intermédiaire, Notions)
+Langue 2 — Niveau
 
-Règles strictes :
-- PAS de puces, PAS d'étoiles, PAS de tirets en début de ligne
-- Sections courtes et concises
-- Maximum 1 page quand imprimé
-- Mots-clés du poste ${poste} bien présents`
+CENTRES D'INTÉRÊT
+Intérêt 1, Intérêt 2, Intérêt 3
+
+RÈGLES STRICTES :
+- AUCUNE puce, AUCUNE étoile, AUCUN tiret en début de ligne
+- Texte riche et développé pour chaque expérience
+- Minimum 400 mots au total
+- Toutes les sections doivent être remplies avec les vraies infos du CV`
           }
         ]
       })
@@ -67,21 +82,25 @@ Règles strictes :
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
-        max_tokens: 800,
+        max_tokens: 1000,
         messages: [
-          { role: 'system', content: 'Tu es un expert RH. Tu réponds UNIQUEMENT avec la lettre, sans commentaires.' },
+          { role: 'system', content: 'Tu es un expert RH. Tu rédiges des lettres de motivation professionnelles et percutantes.' },
           {
             role: 'user',
-            content: `Rédige une lettre de motivation courte et percutante pour le poste de "${poste}" basée sur ce CV :
+            content: `Rédige une lettre de motivation complète et professionnelle pour le poste de "${poste}" basée sur ce CV :
 
-${cvText || 'Profil générique'}
+${cvText}
 
-Règles :
-- Exactement 3 paragraphes courts
+INSTRUCTIONS :
+- Lettre complète de 4 paragraphes bien développés
+- Paragraphe 1 : accroche percutante et motivation pour le poste
+- Paragraphe 2 : expériences clés et compétences en lien avec ${poste}
+- Paragraphe 3 : valeur ajoutée et ce que le candidat apporte
+- Paragraphe 4 : conclusion et disponibilité
 - Commence par "Madame, Monsieur,"
 - Termine par "Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées."
-- Ton professionnel et dynamique
-- Maximum 250 mots
+- Ton professionnel, dynamique et convaincant
+- Minimum 300 mots
 - PAS de puces ni d'étoiles`
           }
         ]
@@ -101,8 +120,8 @@ Règles :
     console.error('Optimize error:', error);
     res.status(500).json({
       newScore,
-      cvOptimise: `Erreur lors de la génération. Veuillez réessayer.`,
-      lettre: `Erreur lors de la génération. Veuillez réessayer.`
+      cvOptimise: 'Erreur lors de la génération. Veuillez réessayer.',
+      lettre: 'Erreur lors de la génération. Veuillez réessayer.'
     });
   }
 }
