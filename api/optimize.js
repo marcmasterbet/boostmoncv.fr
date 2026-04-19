@@ -17,58 +17,51 @@ export default async function handler(req, res) {
         model: 'gpt-4o-mini',
         max_tokens: 2000,
         messages: [
-          { role: 'system', content: 'Tu es un expert RH et rédacteur de CV professionnel haut de gamme. Tu crées des CV complets, détaillés et percutants.' },
+          { role: 'system', content: 'Tu es un expert RH et rédacteur de CV professionnel haut de gamme. Tu enrichis les CV existants sans jamais inventer d\'informations.' },
           {
             role: 'user',
-            content: `Réécris et optimise en profondeur ce CV pour le poste de "${poste}".
+            content: `Prends ce CV et améliore-le en profondeur pour le poste de "${poste}".
 
-CV original :
+CV ORIGINAL À AMÉLIORER :
 ${cvText}
 
-INSTRUCTIONS IMPORTANTES :
-- Garde TOUTES les informations du CV original (expériences, dates, entreprises, formations, compétences, langues)
-- Enrichis et développe chaque expérience avec des détails percutants et des verbes d'action forts
-- Ajoute des résultats concrets et chiffrés quand possible
-- Intègre les mots-clés importants pour le poste de ${poste}
-- Le CV doit être COMPLET et DÉTAILLÉ, pas une version résumée
+RÈGLES ABSOLUES :
+- Garde EXACTEMENT toutes les informations du CV original (noms, entreprises, dates, diplômes, tout)
+- N'invente RIEN qui n'est pas dans le CV original
+- Enrichis chaque expérience avec des verbes d'action forts et des détails percutants
+- Développe les descriptions qui sont trop courtes
+- Ajoute des mots-clés pertinents pour le poste de ${poste}
+- AUCUNE puce, AUCUNE étoile, AUCUN tiret en début de ligne
 
-Format EXACT à respecter (titres en majuscules, pas de puces ni étoiles) :
+Format EXACT à respecter :
 
 NOM PRENOM
 ${poste}
-Email | Téléphone | Ville
+Email | Téléphone | Ville (si présents dans le CV original)
 
 PROFIL PROFESSIONNEL
-3-4 phrases percutantes qui valorisent le candidat pour le poste de ${poste}.
+3-4 phrases percutantes basées sur le vrai profil du candidat.
 
 EXPÉRIENCES PROFESSIONNELLES
 
-Titre du poste — Entreprise — Ville — Date début à Date fin
-Description détaillée de 3-4 lignes minimum avec missions précises, responsabilités, résultats obtenus et compétences utilisées.
+Titre poste — Entreprise — Dates
+Description enrichie de 3-4 lignes avec missions précises et résultats.
 
-Titre du poste — Entreprise — Ville — Date début à Date fin  
-Description détaillée de 3-4 lignes minimum.
+(répéter pour chaque expérience du CV original)
 
 COMPÉTENCES CLÉS
-Compétence 1, Compétence 2, Compétence 3, Compétence 4, Compétence 5, Compétence 6, Compétence 7, Compétence 8
+Toutes les compétences du CV original enrichies et complétées.
 
 FORMATION
 
-Diplôme — Établissement — Ville — Année
-Description ou spécialité si pertinente.
+Diplôme — Établissement — Année
+(toutes les formations du CV original)
 
 LANGUES
-Langue 1 — Niveau (ex: Courant, Intermédiaire, Notions)
-Langue 2 — Niveau
+(toutes les langues du CV original avec niveaux)
 
 CENTRES D'INTÉRÊT
-Intérêt 1, Intérêt 2, Intérêt 3
-
-RÈGLES STRICTES :
-- AUCUNE puce, AUCUNE étoile, AUCUN tiret en début de ligne
-- Texte riche et développé pour chaque expérience
-- Minimum 400 mots au total
-- Toutes les sections doivent être remplies avec les vraies infos du CV`
+(si présents dans le CV original)`
           }
         ]
       })
@@ -84,7 +77,7 @@ RÈGLES STRICTES :
         model: 'gpt-4o-mini',
         max_tokens: 1000,
         messages: [
-          { role: 'system', content: 'Tu es un expert RH. Tu rédiges des lettres de motivation professionnelles et percutantes.' },
+          { role: 'system', content: 'Tu es un expert RH. Tu rédiges des lettres de motivation professionnelles et percutantes basées uniquement sur les vraies informations du CV.' },
           {
             role: 'user',
             content: `Rédige une lettre de motivation complète et professionnelle pour le poste de "${poste}" basée sur ce CV :
@@ -92,7 +85,8 @@ RÈGLES STRICTES :
 ${cvText}
 
 INSTRUCTIONS :
-- Lettre complète de 4 paragraphes bien développés
+- Utilise uniquement les vraies informations du CV
+- 4 paragraphes bien développés
 - Paragraphe 1 : accroche percutante et motivation pour le poste
 - Paragraphe 2 : expériences clés et compétences en lien avec ${poste}
 - Paragraphe 3 : valeur ajoutée et ce que le candidat apporte
