@@ -298,21 +298,19 @@
     doc.setFillColor(...BEIGE);
     doc.rect(0, 0, W, 297, 'F');
 
-    // NOM en noir
-    doc.setTextColor(...DARK);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
-    doc.text(nom.toUpperCase(), ML, 14);
-
-    // Petite bande bordeaux avec intitulé poste
+    // Bande bordeaux fine en haut avec nom et poste
     doc.setFillColor(...BORD);
-    doc.rect(0, 18, W, 8, 'F');
+    doc.rect(0, 0, W, 14, 'F');
     doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text(nom.toUpperCase(), ML, 7);
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.text(posteLabel, ML, 23.5);
+    doc.setFontSize(8);
+    doc.setTextColor(240, 210, 215);
+    doc.text(posteLabel, ML, 12);
 
-    let y = 36;
+    let y = 22;
 
     contentLines.forEach(line => {
       if(y > 284) return;
@@ -357,21 +355,19 @@
     doc.setFillColor(...BEIGE);
     doc.rect(0, 0, W, 297, 'F');
 
-    // Nom en haut
+    // Bande bordeaux fine en haut
     const cvContent = document.getElementById('optimizedCV').textContent;
     const nom = cvContent.split('\n')[0].trim() || '';
-    doc.setTextColor(...DARK);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text(nom.toUpperCase(), 14, 14);
-
-    // Petite bande bordeaux
     doc.setFillColor(...BORD);
-    doc.rect(0, 18, W, 8, 'F');
+    doc.rect(0, 0, W, 14, 'F');
     doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text(nom.toUpperCase(), 14, 7);
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.text('Lettre de motivation — ' + currentPoste, 14, 23.5);
+    doc.setFontSize(8);
+    doc.setTextColor(240, 210, 215);
+    doc.text('Lettre de motivation — ' + currentPoste, 14, 12);
 
     // Texte lettre
     const text = document.getElementById('optimizedLetter').textContent;
@@ -379,7 +375,7 @@
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     const lines = doc.splitTextToSize(text, 178);
-    let y = 38;
+    let y = 24;
     lines.forEach(line => {
       if(y > 284) { doc.addPage(); y = 20; }
       doc.text(line, 16, y);
