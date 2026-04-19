@@ -14,54 +14,61 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        max_tokens: 2000,
+        model: 'gpt-4o',
+        max_tokens: 3000,
         messages: [
-          { role: 'system', content: 'Tu es un expert RH et rédacteur de CV professionnel haut de gamme. Tu enrichis les CV existants sans jamais inventer d\'informations.' },
+          {
+            role: 'system',
+            content: `Tu es le meilleur consultant en recrutement en France, avec 20 ans d'expérience chez les plus grands cabinets RH. Tu as aidé des milliers de candidats à décrocher leur emploi idéal. Tu maîtrises parfaitement les techniques ATS (Applicant Tracking System) et tu sais exactement quels mots-clés et formulations font la différence. Ton travail est de transformer un CV ordinaire en un CV exceptionnel qui se démarque immédiatement.`
+          },
           {
             role: 'user',
-            content: `Prends ce CV et améliore-le en profondeur pour le poste de "${poste}".
+            content: `Je suis candidat au poste de "${poste}". Transforme mon CV en un document exceptionnel qui va décrocher des entretiens.
 
-CV ORIGINAL À AMÉLIORER :
+MON CV ORIGINAL :
 ${cvText}
 
-RÈGLES ABSOLUES :
-- Garde EXACTEMENT toutes les informations du CV original (noms, entreprises, dates, diplômes, tout)
-- N'invente RIEN qui n'est pas dans le CV original
-- Enrichis chaque expérience avec des verbes d'action forts et des détails percutants
-- Développe les descriptions qui sont trop courtes
-- Ajoute des mots-clés pertinents pour le poste de ${poste}
-- AUCUNE puce, AUCUNE étoile, AUCUN tiret en début de ligne
+TON OBJECTIF : Prendre EXACTEMENT toutes mes informations (entreprises, dates, diplômes, tout) et les transformer en un CV de haut niveau qui impressionne les recruteurs.
 
-Format EXACT à respecter :
+RÈGLES ABSOLUES :
+1. Utilise UNIQUEMENT mes vraies informations — n'invente RIEN
+2. Garde toutes mes expériences, toutes mes dates, tous mes diplômes
+3. Transforme chaque description en quelque chose de percutant et professionnel
+4. Utilise des verbes d'action forts : "Piloté", "Développé", "Optimisé", "Géré", "Coordonné", "Assuré", "Réalisé", "Supervisé"
+5. Ajoute des formulations qui montrent l'impact et les résultats
+6. Intègre les mots-clés essentiels pour le poste de ${poste}
+7. AUCUNE puce, AUCUNE étoile, AUCUN tiret en début de ligne
+8. Texte riche, développé, professionnel pour chaque poste
+
+FORMAT EXACT (respecte ces titres en majuscules) :
 
 NOM PRENOM
 ${poste}
-Email | Téléphone | Ville (si présents dans le CV original)
+Coordonnées si présentes dans le CV original
 
 PROFIL PROFESSIONNEL
-3-4 phrases percutantes basées sur le vrai profil du candidat.
+4-5 phrases puissantes qui vendent le candidat pour le poste de ${poste}. Commence par le métier et les années d'expérience. Mets en avant les points forts les plus pertinents.
 
 EXPÉRIENCES PROFESSIONNELLES
 
-Titre poste — Entreprise — Dates
-Description enrichie de 3-4 lignes avec missions précises et résultats.
+Titre du poste — Entreprise — Ville — Période
+Développe en 4-6 lignes riches et détaillées : missions principales, responsabilités clés, compétences techniques utilisées, résultats obtenus. Utilise des formulations professionnelles et percutantes.
 
-(répéter pour chaque expérience du CV original)
+(une entrée complète par expérience du CV original)
 
 COMPÉTENCES CLÉS
-Toutes les compétences du CV original enrichies et complétées.
+Liste complète et enrichie de toutes les compétences techniques et comportementales pertinentes pour ${poste}.
 
 FORMATION
 
-Diplôme — Établissement — Année
-(toutes les formations du CV original)
+Diplôme complet — Établissement — Année
+Mention ou spécialité si pertinente.
 
 LANGUES
-(toutes les langues du CV original avec niveaux)
+Langue — Niveau précis
 
 CENTRES D'INTÉRÊT
-(si présents dans le CV original)`
+Intérêts si présents dans le CV original`
           }
         ]
       })
@@ -74,28 +81,37 @@ CENTRES D'INTÉRÊT
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        max_tokens: 1000,
+        model: 'gpt-4o',
+        max_tokens: 1500,
         messages: [
-          { role: 'system', content: 'Tu es un expert RH. Tu rédiges des lettres de motivation professionnelles et percutantes basées uniquement sur les vraies informations du CV.' },
+          {
+            role: 'system',
+            content: `Tu es un expert en rédaction de lettres de motivation, reconnu pour avoir aidé des milliers de candidats à décrocher des entretiens. Tu rédiges des lettres percutantes, authentiques et personnalisées qui donnent vraiment envie de rencontrer le candidat.`
+          },
           {
             role: 'user',
-            content: `Rédige une lettre de motivation complète et professionnelle pour le poste de "${poste}" basée sur ce CV :
+            content: `Rédige une lettre de motivation exceptionnelle pour le poste de "${poste}" en te basant sur ce CV :
 
 ${cvText}
 
-INSTRUCTIONS :
-- Utilise uniquement les vraies informations du CV
-- 4 paragraphes bien développés
-- Paragraphe 1 : accroche percutante et motivation pour le poste
-- Paragraphe 2 : expériences clés et compétences en lien avec ${poste}
-- Paragraphe 3 : valeur ajoutée et ce que le candidat apporte
-- Paragraphe 4 : conclusion et disponibilité
-- Commence par "Madame, Monsieur,"
-- Termine par "Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées."
-- Ton professionnel, dynamique et convaincant
-- Minimum 300 mots
-- PAS de puces ni d'étoiles`
+OBJECTIF : Une lettre qui donne immédiatement envie au recruteur de décrocher son téléphone.
+
+STRUCTURE :
+- En-tête : Lieu et date à droite, coordonnées candidat à gauche (si disponibles dans le CV)
+- "Madame, Monsieur,"
+- Paragraphe 1 (Accroche) : Une ouverture percutante qui montre la motivation et la connaissance du métier. Pas de cliché.
+- Paragraphe 2 (Expérience) : Les 2-3 expériences les plus pertinentes pour ${poste}, avec des faits concrets et des résultats.
+- Paragraphe 3 (Valeur ajoutée) : Ce que le candidat apporte de unique, ses qualités humaines et professionnelles en lien avec le poste.
+- Paragraphe 4 (Conclusion) : Appel à l'action, disponibilité pour un entretien, formule de politesse complète.
+- "Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées."
+- Signature avec le nom
+
+RÈGLES :
+- Ton professionnel, dynamique et humain
+- Phrases courtes et percutantes
+- Minimum 350 mots
+- Basé UNIQUEMENT sur les vraies infos du CV
+- Aucune puce ni étoile`
           }
         ]
       })
