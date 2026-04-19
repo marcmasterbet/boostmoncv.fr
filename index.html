@@ -101,7 +101,7 @@
     <div class="upload-sub" id="uploadSub">PDF uniquement · Glisser-déposer ou cliquer</div>
   </div>
   <div class="error-msg" id="errorMsg"></div>
-  <input class="input-field" type="text" id="poste" placeholder="Poste visé — ex: Assistante dentaire, Développeur web...">
+  <input class="input-field" type="text" id="poste" placeholder="Poste visé — ex: Directrice d'agence, Comptable...">
   <button class="cta-btn" id="analyzeBtn" onclick="startAnalysis()" disabled>Analyser mon CV</button>
   <div class="trust">
     <span class="trust-item"><span class="trust-dot"></span>Sans inscription</span>
@@ -197,11 +197,7 @@
     document.getElementById('uploadIcon').textContent = '⏳';
     document.getElementById('uploadTitle').textContent = 'Lecture...';
     try {
-      if(file.type === 'application/pdf') {
-        cvText = await extractPDFText(file);
-      } else {
-        throw new Error('Format non supporté');
-      }
+      cvText = await extractPDFText(file);
       document.getElementById('uploadZone').classList.add('has-file');
       document.getElementById('uploadIcon').textContent = '✅';
       document.getElementById('uploadTitle').textContent = file.name;
@@ -287,7 +283,7 @@
     const BORD = [120, 40, 50];
     const BEIGE = [245, 238, 225];
     const BORD_LIGHT = [180, 120, 120];
-    const DARK = [50, 30, 35];
+    const DARK = [40, 25, 30];
 
     const text = document.getElementById('optimizedCV').textContent;
     const allLines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
@@ -298,31 +294,28 @@
     const SECTIONS = ['PROFIL','EXPÉRIENCE','COMPÉTENCE','FORMATION','LANGUE','LOISIR','CENTRE','HOBBY','INTÉRÊT'];
     const isSection = l => SECTIONS.some(s => l.toUpperCase().replace(/S$/,'').includes(s.replace(/S$/,''))) && l.length < 55;
 
-    // EN-TÊTE bordeaux
-    doc.setFillColor(...BORD);
-    doc.rect(0, 0, W, 42, 'F');
+    // Fond beige toute la page
     doc.setFillColor(...BEIGE);
-    doc.rect(0, 42, W, 5, 'F');
+    doc.rect(0, 0, W, 297, 'F');
 
-    doc.setTextColor(255, 255, 255);
+    // NOM en noir
+    doc.setTextColor(...DARK);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(20);
-    doc.text(nom.toUpperCase(), ML, 18);
-    doc.setDrawColor(255, 255, 255);
-    doc.setLineWidth(0.4);
-    doc.line(ML, 23, W - MR, 23);
+    doc.setFontSize(18);
+    doc.text(nom.toUpperCase(), ML, 14);
+
+    // Petite bande bordeaux avec intitulé poste
+    doc.setFillColor(...BORD);
+    doc.rect(0, 18, W, 8, 'F');
+    doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.setTextColor(240, 220, 220);
-    doc.text(posteLabel, ML, 33);
+    doc.setFontSize(9);
+    doc.text(posteLabel, ML, 23.5);
 
-    // Fond beige
-    doc.setFillColor(...BEIGE);
-    doc.rect(0, 47, W, 250, 'F');
+    let y = 36;
 
-    let y = 57;
     contentLines.forEach(line => {
-      if(y > 282) return;
+      if(y > 284) return;
       const clean = line.replace(/^[-*•·]\s*/, '').trim();
       if(!clean) { y += 2; return; }
 
@@ -343,7 +336,7 @@
         doc.setFontSize(8.5);
         doc.setTextColor(...DARK);
         const wrapped = doc.splitTextToSize(clean, TW - 2);
-        if(y + wrapped.length * 4.5 > 284) return;
+        if(y + wrapped.length * 4.5 > 286) return;
         doc.text(wrapped, ML + 2, y);
         y += wrapped.length * 4.5 + 2;
       }
@@ -358,29 +351,37 @@
     const W = 210;
     const BORD = [120, 40, 50];
     const BEIGE = [245, 238, 225];
+    const DARK = [40, 25, 30];
 
-    doc.setFillColor(...BORD);
-    doc.rect(0, 0, W, 25, 'F');
-    doc.setTextColor(255, 255, 255);
+    // Fond beige
+    doc.setFillColor(...BEIGE);
+    doc.rect(0, 0, W, 297, 'F');
+
+    // Nom en haut
+    const cvContent = document.getElementById('optimizedCV').textContent;
+    const nom = cvContent.split('\n')[0].trim() || '';
+    doc.setTextColor(...DARK);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
-    doc.text('Lettre de motivation', 14, 15);
+    doc.setFontSize(14);
+    doc.text(nom.toUpperCase(), 14, 14);
+
+    // Petite bande bordeaux
+    doc.setFillColor(...BORD);
+    doc.rect(0, 18, W, 8, 'F');
+    doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
-    doc.setTextColor(220, 190, 195);
-    doc.text(currentPoste, W - 14, 15, { align: 'right' });
+    doc.text('Lettre de motivation — ' + currentPoste, 14, 23.5);
 
-    doc.setFillColor(...BEIGE);
-    doc.rect(0, 25, W, 272, 'F');
-
+    // Texte lettre
     const text = document.getElementById('optimizedLetter').textContent;
-    doc.setTextColor(50, 30, 35);
+    doc.setTextColor(...DARK);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     const lines = doc.splitTextToSize(text, 178);
     let y = 38;
     lines.forEach(line => {
-      if(y > 282) { doc.addPage(); y = 20; }
+      if(y > 284) { doc.addPage(); y = 20; }
       doc.text(line, 16, y);
       y += 6;
     });
