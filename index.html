@@ -408,8 +408,18 @@
     window.scrollTo(0,0);
   }
 
-  function goBack(n) { showPage(n === 1 ? 'page1' : 'page' + n); }
+function goBack(n) { showPage(n === 1 ? 'page1' : 'page' + n); }
   function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 4000); }
 </script>
+
+<footer style="text-align:center; padding: 2rem 1rem; border-top: 0.5px solid rgba(29,158,117,0.15); margin-top: 2rem;">
+  <p style="font-size:12px; color:#7a8f85;">
+    © 2026 BoostMonCV &nbsp;·&nbsp;
+    <a href="/cgu.html" style="color:#0f6e56; text-decoration:underline;">CGU</a> &nbsp;·&nbsp;
+    <a href="/confidentialite.html" style="color:#0f6e56; text-decoration:underline;">Confidentialité</a> &nbsp;·&nbsp;
+    <a href="/support.html" style="color:#0f6e56; text-decoration:underline;">Support</a>
+  </p>
+</footer>
+
 </body>
 </html>
