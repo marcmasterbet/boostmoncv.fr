@@ -83,6 +83,7 @@
   .download-btn.green:hover { background: var(--green-dark); }
   .back-link { display: block; text-align: center; font-size: 13px; color: var(--green-dark); margin-top: 1rem; cursor: pointer; text-decoration: underline; font-weight: 500; }
   .error-msg { background: rgba(226,75,74,0.08); border: 0.5px solid rgba(226,75,74,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #a32d2d; margin-bottom: 1rem; display: none; }
+  .pay-loading { text-align: center; padding: 1rem; font-size: 14px; color: var(--text-light); display: none; }
 </style>
 </head>
 <body>
@@ -141,8 +142,9 @@
     <div class="card-title">Points à améliorer</div>
     <div id="critiqueList"></div>
   </div>
-  <button class="improve-btn" onclick="startOptimisation()">✨ Optimiser mon CV et recevoir ma lettre de motivation→</button>
-  <div class="improve-sub">Nous allons réécrire et optimiser votre CV</div>
+  <button class="improve-btn" id="improveBtn" onclick="startOptimisation()">✨ Booster mon CV & obtenir ma lettre de motivation →</button>
+  <div class="pay-loading" id="payLoading">⏳ Redirection vers le paiement sécurisé...</div>
+  <div class="improve-sub">Paiement sécurisé · 2,99€ · CV + Lettre inclus</div>
   <span class="back-link" onclick="goBack(1)">← Recommencer</span>
 </div>
 
@@ -260,20 +262,25 @@
   }
 
   async function startOptimisation() {
-    showPage('pageOptLoading');
-    animateLoading(['opt1','opt2','opt3','opt4'], 'progressFill2', 4000, runOptimisation);
-  }
-
-  async function runOptimisation() {
+    const btn = document.getElementById('improveBtn');
+    const loader = document.getElementById('payLoading');
+    btn.disabled = true;
+    btn.textContent = '⏳ Chargement...';
+    loader.style.display = 'block';
     try {
-      const r = await fetch('/api/optimize', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cvText, poste: currentPoste, score: currentScore}) });
+      const r = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({cvText, poste: currentPoste, score: currentScore})
+      });
       const data = await r.json();
-      document.getElementById('oldScoreDisplay').textContent = currentScore + '/100';
-      document.getElementById('newScoreDisplay').textContent = data.newScore + '/100';
-      document.getElementById('optimizedCV').textContent = data.cvOptimise;
-      document.getElementById('optimizedLetter').textContent = data.lettre;
-      showPage('page3');
-    } catch(e) { showPage('page2'); }
+      if(data.url) window.location.href = data.url;
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = '✨ Booster mon CV & obtenir ma lettre de motivation →';
+      loader.style.display = 'none';
+      showError('Erreur lors du paiement. Réessayez.');
+    }
   }
 
   function downloadCV() {
@@ -284,21 +291,15 @@
     const BEIGE = [245, 238, 225];
     const BORD_LIGHT = [180, 120, 120];
     const DARK = [40, 25, 30];
-
     const text = document.getElementById('optimizedCV').textContent;
     const allLines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
     const nom = allLines[0] || 'Candidat';
     const posteLabel = allLines[1] || currentPoste;
     const contentLines = allLines.slice(2);
-
     const SECTIONS = ['PROFIL','EXPÉRIENCE','COMPÉTENCE','FORMATION','LANGUE','LOISIR','CENTRE','HOBBY','INTÉRÊT'];
     const isSection = l => SECTIONS.some(s => l.toUpperCase().replace(/S$/,'').includes(s.replace(/S$/,''))) && l.length < 55;
-
-    // Fond beige toute la page
     doc.setFillColor(...BEIGE);
     doc.rect(0, 0, W, 297, 'F');
-
-    // Bande bordeaux fine en haut avec nom et poste
     doc.setFillColor(...BORD);
     doc.rect(0, 0, W, 14, 'F');
     doc.setTextColor(255, 255, 255);
@@ -309,14 +310,11 @@
     doc.setFontSize(8);
     doc.setTextColor(240, 210, 215);
     doc.text(posteLabel, ML, 12);
-
     let y = 22;
-
     contentLines.forEach(line => {
       if(y > 284) return;
       const clean = line.replace(/^[-*•·]\s*/, '').trim();
       if(!clean) { y += 2; return; }
-
       if(isSection(clean)) {
         y += 2;
         doc.setFillColor(...BORD);
@@ -339,7 +337,6 @@
         y += wrapped.length * 4.5 + 2;
       }
     });
-
     doc.save('CV_' + nom.replace(/\s/g, '_') + '.pdf');
   }
 
@@ -350,12 +347,8 @@
     const BORD = [120, 40, 50];
     const BEIGE = [245, 238, 225];
     const DARK = [40, 25, 30];
-
-    // Fond beige
     doc.setFillColor(...BEIGE);
     doc.rect(0, 0, W, 297, 'F');
-
-    // Bande bordeaux fine en haut
     const cvContent = document.getElementById('optimizedCV').textContent;
     const nom = cvContent.split('\n')[0].trim() || '';
     doc.setFillColor(...BORD);
@@ -368,8 +361,6 @@
     doc.setFontSize(8);
     doc.setTextColor(240, 210, 215);
     doc.text('Lettre de motivation — ' + currentPoste, 14, 12);
-
-    // Texte lettre
     const text = document.getElementById('optimizedLetter').textContent;
     doc.setTextColor(...DARK);
     doc.setFont('helvetica', 'normal');
@@ -381,7 +372,6 @@
       doc.text(line, 16, y);
       y += 6;
     });
-
     doc.save('Lettre_motivation.pdf');
   }
 
@@ -408,7 +398,7 @@
     window.scrollTo(0,0);
   }
 
-function goBack(n) { showPage(n === 1 ? 'page1' : 'page' + n); }
+  function goBack(n) { showPage(n === 1 ? 'page1' : 'page' + n); }
   function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 4000); }
 </script>
 
