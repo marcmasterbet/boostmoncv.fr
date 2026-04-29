@@ -19,6 +19,8 @@
     --text-light: #7a8f85;
     --text-muted: #a0b5aa;
     --border: rgba(29,158,117,0.2);
+    --orange: #E8821A;
+    --red: #E84545;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
@@ -70,12 +72,39 @@
   .improve-btn { width: 100%; background: var(--green); color: #fff; border: none; border-radius: 12px; padding: 18px; font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-bottom: 0.5rem; }
   .improve-btn:hover { background: var(--green-dark); transform: translateY(-2px); }
   .improve-sub { text-align: center; font-size: 12px; color: var(--text-muted); }
+  .pay-loading { text-align: center; padding: 1rem; font-size: 14px; color: var(--text-light); display: none; }
   .new-score-banner { background: linear-gradient(135deg, rgba(29,158,117,0.1), rgba(24,95,165,0.1)); border: 0.5px solid rgba(29,158,117,0.25); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-around; }
   .score-val { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; }
   .score-val.old { color: var(--blue); opacity: 0.5; text-decoration: line-through; }
   .score-val.new { color: var(--green); }
   .score-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; text-align: center; }
   .score-arrow { font-size: 1.5rem; color: var(--green); }
+  .ats-banner { background: var(--card); border: 0.5px solid rgba(29,158,117,0.15); border-radius: 14px; padding: 1.2rem 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; }
+  .ats-label { font-size: 13px; color: var(--text-light); }
+  .ats-score { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--orange); }
+  .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
+  .section-card { background: var(--card); border: 0.5px solid rgba(29,158,117,0.15); border-radius: 12px; padding: 1rem; }
+  .section-name { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+  .section-note { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 0.3rem; }
+  .section-comment { font-size: 11px; color: #4a6a5a; line-height: 1.4; }
+  .note-good { color: var(--green); }
+  .note-mid { color: var(--orange); }
+  .note-bad { color: var(--red); }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+  .tag { background: rgba(29,158,117,0.1); border: 0.5px solid rgba(29,158,117,0.3); color: var(--green-dark); font-size: 12px; padding: 4px 10px; border-radius: 20px; }
+  .tag.missing { background: rgba(232,75,69,0.08); border-color: rgba(232,75,69,0.3); color: var(--red); }
+  .modif-item { background: var(--cream); border-radius: 10px; padding: 1rem; margin-bottom: 0.8rem; }
+  .modif-old { font-size: 12px; color: var(--red); margin-bottom: 0.4rem; }
+  .modif-old span { background: rgba(232,75,69,0.1); padding: 2px 6px; border-radius: 4px; font-style: italic; }
+  .modif-new { font-size: 12px; color: var(--green-dark); margin-bottom: 0.4rem; }
+  .modif-new span { background: rgba(29,158,117,0.1); padding: 2px 6px; border-radius: 4px; font-weight: 500; }
+  .modif-why { font-size: 11px; color: var(--text-muted); }
+  .accroche-item { background: var(--cream); border-left: 3px solid var(--green); padding: 0.8rem 1rem; border-radius: 0 8px 8px 0; margin-bottom: 0.6rem; font-size: 13px; color: #2a4a3a; line-height: 1.5; cursor: pointer; transition: all 0.2s; }
+  .accroche-item:hover { background: rgba(29,158,117,0.1); }
+  .accroche-num { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: var(--green); margin-bottom: 0.3rem; }
+  .question-item { background: var(--cream); border-radius: 10px; padding: 1rem; margin-bottom: 0.8rem; }
+  .question-q { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+  .question-c { font-size: 12px; color: #4a6a5a; line-height: 1.5; }
   .optimized-content { white-space: pre-wrap; font-size: 13px; line-height: 1.7; color: #2a4a3a; max-height: 300px; overflow-y: auto; }
   .download-btn { width: 100%; background: var(--blue); color: #fff; border: none; border-radius: 12px; padding: 16px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-bottom: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .download-btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
@@ -83,7 +112,7 @@
   .download-btn.green:hover { background: var(--green-dark); }
   .back-link { display: block; text-align: center; font-size: 13px; color: var(--green-dark); margin-top: 1rem; cursor: pointer; text-decoration: underline; font-weight: 500; }
   .error-msg { background: rgba(226,75,74,0.08); border: 0.5px solid rgba(226,75,74,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #a32d2d; margin-bottom: 1rem; display: none; }
-  .pay-loading { text-align: center; padding: 1rem; font-size: 14px; color: var(--text-light); display: none; }
+  .section-divider { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--text); margin: 1.5rem 0 0.8rem; }
 </style>
 </head>
 <body>
@@ -144,44 +173,96 @@
   </div>
   <button class="improve-btn" id="improveBtn" onclick="startOptimisation()">✨ Booster mon CV & obtenir ma lettre de motivation →</button>
   <div class="pay-loading" id="payLoading">⏳ Redirection vers le paiement sécurisé...</div>
-  <div class="improve-sub">Paiement sécurisé · 2,99€ · CV + Lettre inclus</div>
+  <div class="improve-sub">Paiement sécurisé · 2,99€ · Rapport complet inclus</div>
   <span class="back-link" onclick="goBack(1)">← Recommencer</span>
 </div>
 
 <div class="page" id="pageOptLoading">
   <div class="loading-screen">
     <h3>Optimisation en cours...</h3>
-    <p>Réécriture de votre CV et rédaction de votre lettre</p>
+    <p>Analyse approfondie de votre CV par l'IA</p>
     <div class="progress-bar"><div class="progress-fill" id="progressFill2"></div></div>
     <div class="loading-steps">
-      <div class="step active" id="opt1"><span>🧠</span> Analyse des points faibles</div>
-      <div class="step" id="opt2"><span>✍️</span> Réécriture du CV</div>
-      <div class="step" id="opt3"><span>📝</span> Rédaction de la lettre de motivation</div>
-      <div class="step" id="opt4"><span>📄</span> Préparation du PDF</div>
+      <div class="step active" id="opt1"><span>🧠</span> Analyse ATS et sections</div>
+      <div class="step" id="opt2"><span>🎯</span> Mots-clés et marché 2026</div>
+      <div class="step" id="opt3"><span>✍️</span> Modifications et compétences</div>
+      <div class="step" id="opt4"><span>📝</span> Lettre de motivation et questions</div>
     </div>
   </div>
 </div>
 
 <div class="page" id="page3">
   <div class="result-header">
-    <h2>Votre CV est optimisé !</h2>
-    <p>Prêt à faire la différence</p>
+    <h2>Votre rapport complet 🎯</h2>
+    <p id="poste-label3">Optimisé pour —</p>
   </div>
+
+  <!-- Scores -->
   <div class="new-score-banner">
     <div><div class="score-val old" id="oldScoreDisplay">—</div><div class="score-lbl">Score initial</div></div>
     <div class="score-arrow">→</div>
     <div><div class="score-val new" id="newScoreDisplay">—</div><div class="score-lbl">Nouveau score</div></div>
   </div>
-  <div class="card">
-    <div class="card-title">CV optimisé</div>
-    <div class="optimized-content" id="optimizedCV"></div>
+
+  <!-- Score ATS -->
+  <div class="ats-banner">
+    <div>
+      <div class="card-title" style="margin-bottom:0.2rem">Score ATS</div>
+      <div class="ats-label">Compatibilité filtres automatiques</div>
+    </div>
+    <div class="ats-score" id="atsScore">—%</div>
   </div>
+
+  <!-- Analyse sections -->
+  <div class="section-divider">📊 Analyse par section</div>
+  <div class="section-grid" id="sectionGrid"></div>
+
+  <!-- Mots-clés manquants -->
   <div class="card">
-    <div class="card-title">Lettre de motivation</div>
+    <div class="card-title">🔑 Mots-clés manquants</div>
+    <div id="motsCles"></div>
+  </div>
+
+  <!-- Comparaison marché -->
+  <div class="card">
+    <div class="card-title">📈 Comparaison marché 2026</div>
+    <p id="comparaisonMarche" style="font-size:13px; color:#4a6a5a; line-height:1.6;"></p>
+  </div>
+
+  <!-- Modifications -->
+  <div class="section-divider">✏️ Modifications recommandées</div>
+  <div id="modifList"></div>
+
+  <!-- Phrases d'accroche -->
+  <div class="card">
+    <div class="card-title">💬 3 Phrases d'accroche — cliquez pour copier</div>
+    <div id="accrocheList"></div>
+  </div>
+
+  <!-- Compétences -->
+  <div class="card">
+    <div class="card-title">⚡ Compétences recommandées</div>
+    <div style="margin-bottom:0.8rem">
+      <div style="font-size:11px; color:var(--text-muted); margin-bottom:0.4rem;">À METTRE EN AVANT</div>
+      <div id="compMettre" class="tag-list"></div>
+    </div>
+    <div>
+      <div style="font-size:11px; color:var(--text-muted); margin-bottom:0.4rem;">À AJOUTER SI VOUS LA POSSÉDEZ</div>
+      <div id="compAjouter" class="tag-list"></div>
+    </div>
+  </div>
+
+  <!-- Questions entretien -->
+  <div class="section-divider">🎤 Questions d'entretien probables</div>
+  <div id="questionsList"></div>
+
+  <!-- Lettre de motivation -->
+  <div class="card">
+    <div class="card-title">📄 Lettre de motivation</div>
     <div class="optimized-content" id="optimizedLetter"></div>
   </div>
-  <button class="download-btn green" onclick="downloadCV()">⬇ Télécharger mon CV optimisé (PDF)</button>
-  <button class="download-btn" onclick="downloadLetter()">⬇ Télécharger ma lettre de motivation (PDF)</button>
+
+  <button class="download-btn" onclick="downloadLetter()">⬇ Télécharger la lettre de motivation (PDF)</button>
   <span class="back-link" onclick="goBack(1)">← Analyser un autre CV</span>
 </div>
 
@@ -283,61 +364,105 @@
     }
   }
 
-  function downloadCV() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-    const W = 210, ML = 14, MR = 14, TW = W - ML - MR;
-    const BORD = [120, 40, 50];
-    const BEIGE = [245, 238, 225];
-    const BORD_LIGHT = [180, 120, 120];
-    const DARK = [40, 25, 30];
-    const text = document.getElementById('optimizedCV').textContent;
-    const allLines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    const nom = allLines[0] || 'Candidat';
-    const posteLabel = allLines[1] || currentPoste;
-    const contentLines = allLines.slice(2);
-    const SECTIONS = ['PROFIL','EXPÉRIENCE','COMPÉTENCE','FORMATION','LANGUE','LOISIR','CENTRE','HOBBY','INTÉRÊT'];
-    const isSection = l => SECTIONS.some(s => l.toUpperCase().replace(/S$/,'').includes(s.replace(/S$/,''))) && l.length < 55;
-    doc.setFillColor(...BEIGE);
-    doc.rect(0, 0, W, 297, 'F');
-    doc.setFillColor(...BORD);
-    doc.rect(0, 0, W, 14, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
-    doc.text(nom.toUpperCase(), ML, 7);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(240, 210, 215);
-    doc.text(posteLabel, ML, 12);
-    let y = 22;
-    contentLines.forEach(line => {
-      if(y > 284) return;
-      const clean = line.replace(/^[-*•·]\s*/, '').trim();
-      if(!clean) { y += 2; return; }
-      if(isSection(clean)) {
-        y += 2;
-        doc.setFillColor(...BORD);
-        doc.rect(ML, y - 4, 3, 6, 'F');
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(9);
-        doc.setTextColor(...BORD);
-        doc.text(clean.toUpperCase(), ML + 5, y);
-        doc.setDrawColor(...BORD_LIGHT);
-        doc.setLineWidth(0.2);
-        doc.line(ML + 5, y + 1.5, W - MR, y + 1.5);
-        y += 8;
-      } else {
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8.5);
-        doc.setTextColor(...DARK);
-        const wrapped = doc.splitTextToSize(clean, TW - 2);
-        if(y + wrapped.length * 4.5 > 286) return;
-        doc.text(wrapped, ML + 2, y);
-        y += wrapped.length * 4.5 + 2;
-      }
+  function getNoteClass(note) {
+    if(note >= 7) return 'note-good';
+    if(note >= 5) return 'note-mid';
+    return 'note-bad';
+  }
+
+  function displayResults(data) {
+    document.getElementById('oldScoreDisplay').textContent = currentScore + '/100';
+    document.getElementById('newScoreDisplay').textContent = data.newScore + '/100';
+    document.getElementById('poste-label3').textContent = 'Optimisé pour ' + currentPoste;
+
+    // ATS
+    document.getElementById('atsScore').textContent = data.scoreATS + '%';
+
+    // Sections
+    const grid = document.getElementById('sectionGrid');
+    grid.innerHTML = '';
+    if(data.analyseSections) {
+      const sections = { experience: 'Expérience', competences: 'Compétences', formation: 'Formation', presentation: 'Présentation' };
+      Object.entries(sections).forEach(([key, label]) => {
+        const s = data.analyseSections[key];
+        if(s) {
+          grid.innerHTML += `<div class="section-card">
+            <div class="section-name">${label}</div>
+            <div class="section-note ${getNoteClass(s.note)}">${s.note}/10</div>
+            <div class="section-comment">${s.commentaire}</div>
+          </div>`;
+        }
+      });
+    }
+
+    // Mots-clés
+    const mc = document.getElementById('motsCles');
+    mc.innerHTML = '<div class="tag-list">';
+    if(data.motsClesManquants) {
+      data.motsClesManquants.forEach(m => { mc.innerHTML += `<span class="tag missing">${m}</span>`; });
+    }
+    mc.innerHTML += '</div>';
+
+    // Comparaison marché
+    document.getElementById('comparaisonMarche').textContent = data.comparaisonMarche || '';
+
+    // Modifications
+    const modif = document.getElementById('modifList');
+    modif.innerHTML = '';
+    if(data.modifications) {
+      data.modifications.forEach(m => {
+        modif.innerHTML += `<div class="modif-item">
+          <div class="modif-old">❌ <span>${m.ancien}</span></div>
+          <div class="modif-new">✅ <span>${m.nouveau}</span></div>
+          <div class="modif-why">💡 ${m.pourquoi}</div>
+        </div>`;
+      });
+    }
+
+    // Phrases d'accroche
+    const acc = document.getElementById('accrocheList');
+    acc.innerHTML = '';
+    if(data.phrasesAccroche) {
+      data.phrasesAccroche.forEach((p, i) => {
+        acc.innerHTML += `<div class="accroche-item" onclick="copyText('${p.replace(/'/g, "\\'")}')">
+          <div class="accroche-num">VERSION ${i+1}</div>
+          ${p}
+        </div>`;
+      });
+    }
+
+    // Compétences
+    const cm = document.getElementById('compMettre');
+    const ca = document.getElementById('compAjouter');
+    cm.innerHTML = '';
+    ca.innerHTML = '';
+    if(data.competencesRecommandees) {
+      (data.competencesRecommandees.aMettre || []).forEach(c => { cm.innerHTML += `<span class="tag">${c}</span>`; });
+      (data.competencesRecommandees.aAjouter || []).forEach(c => { ca.innerHTML += `<span class="tag missing">${c}</span>`; });
+    }
+
+    // Questions
+    const ql = document.getElementById('questionsList');
+    ql.innerHTML = '';
+    if(data.questionsEntretien) {
+      data.questionsEntretien.forEach(q => {
+        ql.innerHTML += `<div class="question-item">
+          <div class="question-q">❓ ${q.question}</div>
+          <div class="question-c">💡 ${q.conseil}</div>
+        </div>`;
+      });
+    }
+
+    // Lettre
+    document.getElementById('optimizedLetter').textContent = data.lettre || '';
+
+    showPage('page3');
+  }
+
+  function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Phrase copiée !');
     });
-    doc.save('CV_' + nom.replace(/\s/g, '_') + '.pdf');
   }
 
   function downloadLetter() {
@@ -349,18 +474,16 @@
     const DARK = [40, 25, 30];
     doc.setFillColor(...BEIGE);
     doc.rect(0, 0, W, 297, 'F');
-    const cvContent = document.getElementById('optimizedCV').textContent;
-    const nom = cvContent.split('\n')[0].trim() || '';
     doc.setFillColor(...BORD);
     doc.rect(0, 0, W, 14, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text(nom.toUpperCase(), 14, 7);
+    doc.text('LETTRE DE MOTIVATION', 14, 7);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(240, 210, 215);
-    doc.text('Lettre de motivation — ' + currentPoste, 14, 12);
+    doc.text('Poste : ' + currentPoste, 14, 12);
     const text = document.getElementById('optimizedLetter').textContent;
     doc.setTextColor(...DARK);
     doc.setFont('helvetica', 'normal');
@@ -400,6 +523,32 @@
 
   function goBack(n) { showPage(n === 1 ? 'page1' : 'page' + n); }
   function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 4000); }
+
+  // Vérifier si retour de Stripe
+  window.addEventListener('load', async () => {
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    if(sessionId) {
+      showPage('pageOptLoading');
+      animateLoading(['opt1','opt2','opt3','opt4'], 'progressFill2', 5000, async () => {
+        try {
+          const session = await fetch('/api/get-session?session_id=' + sessionId);
+          const sessionData = await session.json();
+          if(sessionData.paid) {
+            currentPoste = sessionData.poste;
+            currentScore = sessionData.score;
+            const r = await fetch('/api/optimize', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({cvText: sessionData.cvText, poste: sessionData.poste, score: sessionData.score})
+            });
+            const data = await r.json();
+            displayResults(data);
+          }
+        } catch(e) { showPage('page1'); }
+      });
+    }
+  });
 </script>
 
 <footer style="text-align:center; padding: 2rem 1rem; border-top: 0.5px solid rgba(29,158,117,0.15); margin-top: 2rem;">
