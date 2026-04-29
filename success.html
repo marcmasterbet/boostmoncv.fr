@@ -7,9 +7,8 @@
 <script>
   const params = new URLSearchParams(window.location.search);
   const sessionId = params.get('session_id');
-  const dataId = params.get('data_id');
-  if(sessionId && dataId) {
-    window.location.href = '/?session_id=' + sessionId + '&data_id=' + dataId;
+  if(sessionId) {
+    window.location.href = '/?session_id=' + sessionId;
   } else {
     window.location.href = '/';
   }
