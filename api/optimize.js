@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   const newScore = Math.min(score + Math.floor(Math.random() * 10) + 18, 95);
 
   try {
-    const cvResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+    const mainResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -15,46 +15,63 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'gpt-4o',
-        max_tokens: 3000,
+        max_tokens: 4000,
         messages: [
           {
             role: 'system',
-            content: `Tu es un expert en recrutement avec 20 ans d'expérience en France. Tu analyses des CV et tu fournis des modifications CHIRURGICALES et PRÉCISES. Tu ne réécris jamais entièrement un CV. Tu indiques exactement quoi remplacer par quoi, phrase par phrase. Tu n'inventes jamais de faits, dates ou expériences qui ne sont pas dans le CV original.`
+            content: `Tu es le meilleur expert en recrutement en France avec 20 ans d'expérience. Tu analyses des CV avec une précision chirurgicale et fournis des recommandations ultra-pertinentes et actionnables. Tu réponds UNIQUEMENT en JSON valide.`
           },
           {
             role: 'user',
-            content: `Analyse ce CV pour le poste de "${poste}" et donne des modifications PRÉCISES et PERTINENTES.
+            content: `Analyse ce CV pour le poste de "${poste}" et réponds UNIQUEMENT en JSON valide avec ce format exact :
+
+{
+  "scoreATS": <nombre entre 40 et 85>,
+  "analyseSections": {
+    "experience": {"note": <0-10>, "commentaire": "<commentaire précis>"},
+    "competences": {"note": <0-10>, "commentaire": "<commentaire précis>"},
+    "formation": {"note": <0-10>, "commentaire": "<commentaire précis>"},
+    "presentation": {"note": <0-10>, "commentaire": "<commentaire précis>"}
+  },
+  "motsClesManquants": ["<mot-clé 1>", "<mot-clé 2>", "<mot-clé 3>", "<mot-clé 4>", "<mot-clé 5>"],
+  "comparaisonMarche": "<analyse en 3-4 phrases comparant le profil aux attentes du marché 2026 pour ${poste}>",
+  "modifications": [
+    {
+      "ancien": "<texte exact du CV>",
+      "nouveau": "<texte optimisé>",
+      "pourquoi": "<explication courte>"
+    }
+  ],
+  "phrasesAccroche": [
+    "<phrase d'accroche version 1 - dynamique>",
+    "<phrase d'accroche version 2 - expérience>",
+    "<phrase d'accroche version 3 - compétences>"
+  ],
+  "competencesRecommandees": {
+    "aMettre": ["<compétence présente dans le CV à mettre en avant>"],
+    "aAjouter": ["<compétence à ajouter si possédée>"]
+  },
+  "questionsEntretien": [
+    {"question": "<question>", "conseil": "<conseil pour y répondre>"},
+    {"question": "<question>", "conseil": "<conseil>"},
+    {"question": "<question>", "conseil": "<conseil>"},
+    {"question": "<question>", "conseil": "<conseil>"},
+    {"question": "<question>", "conseil": "<conseil>"}
+  ]
+}
 
 CV ORIGINAL :
 ${cvText}
 
-INSTRUCTIONS :
-1. Pour chaque modification, utilise ce format EXACT :
-   ❌ REMPLACER : "texte exact du CV original"
-   ✅ PAR : "nouveau texte optimisé pour ${poste}"
-   💡 POURQUOI : explication courte et précise
+POSTE VISÉ : ${poste}
 
-2. Pour les COMPÉTENCES, liste exactement les compétences à ajouter/modifier pour correspondre au poste de ${poste}. Base-toi uniquement sur ce qui est dans le CV.
-
-3. Donne 6 à 10 modifications maximum, les plus impactantes en premier.
-
-4. INTERDICTIONS ABSOLUES :
-   - Ne jamais inventer des expériences ou diplômes
-   - Ne jamais changer les dates ou titres de postes
-
-5. POUR LES COMPÉTENCES :
-   - Tu PEUX suggérer des compétences manquantes mais cohérentes avec le parcours et le poste
-   - Indique clairement "À ajouter si vous la possédez :" pour les compétences suggérées
-   - Base-toi sur le secteur et l'expérience réelle du candidat
-
-FORMAT DE RÉPONSE :
-## MODIFICATIONS DU CV
-
-[liste des modifications avec le format ❌/✅/💡]
-
-## COMPÉTENCES RECOMMANDÉES POUR ${poste.toUpperCase()}
-
-[liste des compétences à mettre en avant ou ajouter basées sur le CV]`
+RÈGLES :
+- scoreATS = score de compatibilité avec les filtres ATS des entreprises
+- modifications : 6 à 8 modifications chirurgicales, les plus impactantes
+- phrasesAccroche : 3 phrases de profil différentes et percutantes basées sur le vrai parcours
+- questionsEntretien : les 5 questions les plus probables pour ${poste} avec conseils précis
+- Ne jamais inventer expériences ou diplômes
+- Tu PEUX suggérer des compétences cohérentes avec le parcours (indique-les dans aAjouter)`
           }
         ]
       })
@@ -72,7 +89,7 @@ FORMAT DE RÉPONSE :
         messages: [
           {
             role: 'system',
-            content: `Tu es un expert en rédaction de lettres de motivation. Tu rédiges des lettres percutantes et authentiques basées UNIQUEMENT sur les vraies informations du CV. Tu ne inventes jamais de faits. Ton style est professionnel, dynamique et humain.`
+            content: `Tu es un expert en rédaction de lettres de motivation. Tu rédiges des lettres percutantes et authentiques basées UNIQUEMENT sur les vraies informations du CV. Ton style est professionnel, dynamique et humain.`
           },
           {
             role: 'user',
@@ -80,36 +97,40 @@ FORMAT DE RÉPONSE :
 
 ${cvText}
 
-INTERDICTIONS :
-- Ne jamais inventer de faits, dates ou expériences
-- Ne jamais dire que le candidat a occupé le poste de "${poste}" si ce n'est pas dans le CV
-- Valoriser honnêtement le parcours réel
-
-STRUCTURE OBLIGATOIRE :
+STRUCTURE :
 - "Madame, Monsieur,"
-- Paragraphe 1 : Accroche PERCUTANTE — motivation sincère pour ${poste} + présentation du profil réel en 2-3 phrases
-- Paragraphe 2 : Expériences les plus pertinentes pour ${poste} avec faits concrets et chiffres si disponibles
-- Paragraphe 3 : Compétences clés directement utiles pour ${poste} + valeur ajoutée unique du candidat
+- Paragraphe 1 : Accroche PERCUTANTE — motivation sincère pour ${poste} + présentation du profil réel
+- Paragraphe 2 : Expériences les plus pertinentes pour ${poste} avec faits concrets
+- Paragraphe 3 : Compétences clés directement utiles pour ${poste} + valeur ajoutée unique
 - Paragraphe 4 : Conclusion dynamique + disponibilité pour entretien
 - "Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées."
 
 RÈGLES :
-- Ton professionnel, dynamique et humain
 - Minimum 400 mots
 - Aucune puce ni étoile
-- Basé UNIQUEMENT sur les vraies infos du CV
-- Chaque paragraphe doit être dense et percutant`
+- Basé UNIQUEMENT sur les vraies infos du CV`
           }
         ]
       })
     });
 
-    const cvData = await cvResponse.json();
+    const mainData = await mainResponse.json();
     const letterData = await letterResponse.json();
+
+    const text = mainData.choices[0].message.content;
+    const clean = text.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
 
     res.status(200).json({
       newScore,
-      cvOptimise: cvData.choices[0].message.content,
+      scoreATS: result.scoreATS,
+      analyseSections: result.analyseSections,
+      motsClesManquants: result.motsClesManquants,
+      comparaisonMarche: result.comparaisonMarche,
+      modifications: result.modifications,
+      phrasesAccroche: result.phrasesAccroche,
+      competencesRecommandees: result.competencesRecommandees,
+      questionsEntretien: result.questionsEntretien,
       lettre: letterData.choices[0].message.content
     });
 
@@ -117,7 +138,8 @@ RÈGLES :
     console.error('Optimize error:', error);
     res.status(500).json({
       newScore,
-      cvOptimise: 'Erreur lors de la génération. Veuillez réessayer.',
+      scoreATS: 0,
+      modifications: [],
       lettre: 'Erreur lors de la génération. Veuillez réessayer.'
     });
   }
