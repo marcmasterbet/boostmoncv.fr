@@ -75,7 +75,23 @@
   .pay-loading { text-align: center; padding: 1rem; font-size: 14px; color: var(--text-light); display: none; }
   .locked-block { position: relative; margin-bottom: 0.6rem; }
   .locked-content { background: var(--card); border: 0.5px solid rgba(29,158,117,0.15); border-radius: 12px; padding: 1rem; filter: blur(3px); user-select: none; pointer-events: none; }
+  .locked-content.urgent { border-color: rgba(232,75,69,0.3); background: rgba(232,75,69,0.03); }
   .locked-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+  .alert-banner { background: rgba(232,75,69,0.08); border: 0.5px solid rgba(232,75,69,0.3); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem; }
+  .alert-banner-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .alert-banner-text { font-size: 13px; color: #a32d2d; line-height: 1.5; }
+  .alert-banner-text strong { font-weight: 700; display: block; margin-bottom: 0.2rem; }
+  .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
+  .counter-item { background: var(--card); border: 0.5px solid rgba(29,158,117,0.15); border-radius: 10px; padding: 0.8rem 0.5rem; text-align: center; }
+  .counter-num { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--red); }
+  .counter-label { font-size: 10px; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.3; }
+  .unlock-header { text-align: center; margin-bottom: 1rem; }
+  .unlock-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 0.3rem; }
+  .unlock-subtitle { font-size: 12px; color: var(--text-muted); }
+  .price-box { text-align: center; margin-bottom: 0.8rem; }
+  .price-old { font-size: 14px; color: var(--text-muted); text-decoration: line-through; margin-bottom: 0.2rem; }
+  .price-new { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--green); }
+  .price-new span { font-size: 13px; font-weight: 400; color: var(--text-muted); }
   .new-score-banner { background: linear-gradient(135deg, rgba(29,158,117,0.1), rgba(24,95,165,0.1)); border: 0.5px solid rgba(29,158,117,0.25); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-around; }
   .score-val { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; }
   .score-val.old { color: var(--blue); opacity: 0.5; text-decoration: line-through; }
@@ -114,8 +130,6 @@
   .back-link { display: block; text-align: center; font-size: 13px; color: var(--green-dark); margin-top: 1rem; cursor: pointer; text-decoration: underline; font-weight: 500; }
   .error-msg { background: rgba(226,75,74,0.08); border: 0.5px solid rgba(226,75,74,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #a32d2d; margin-bottom: 1rem; display: none; }
   .section-divider { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--text); margin: 1.5rem 0 0.8rem; }
-  .unlock-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 0.8rem; text-align: center; }
-  .unlock-subtitle { font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 1rem; }
 </style>
 </head>
 <body>
@@ -178,12 +192,43 @@
     <div id="critiqueList"></div>
   </div>
 
+  <!-- Alerte urgence -->
+  <div class="alert-banner">
+    <div class="alert-banner-icon">⚠️</div>
+    <div class="alert-banner-text">
+      <strong>Votre CV a des lacunes critiques pour ce poste</strong>
+      Notre IA a identifié des problèmes qui réduisent significativement vos chances d'être sélectionné.
+    </div>
+  </div>
+
+  <!-- Compteurs -->
+  <div class="counter-grid">
+    <div class="counter-item">
+      <div class="counter-num">8</div>
+      <div class="counter-label">modifications identifiées</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-num">5</div>
+      <div class="counter-label">mots-clés manquants</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-num">3</div>
+      <div class="counter-label">phrases d'accroche</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-num">5</div>
+      <div class="counter-label">questions d'entretien</div>
+    </div>
+  </div>
+
   <!-- Aperçu flou -->
-  <div class="unlock-title">🔒 Votre rapport complet est prêt</div>
-  <div class="unlock-subtitle">Débloquez l'accès pour voir tout ce qui a été préparé pour vous</div>
+  <div class="unlock-header">
+    <div class="unlock-title">🔒 Votre rapport complet est prêt</div>
+    <div class="unlock-subtitle">Débloquez l'accès pour voir tout ce qui a été préparé pour vous</div>
+  </div>
 
   <div class="locked-block">
-    <div class="locked-content">
+    <div class="locked-content urgent">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <div style="font-size:13px; color:#2a4a3a; font-weight:600;">📊 Score ATS — Compatibilité filtres automatiques</div>
         <div style="font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:800; color:var(--orange);">??%</div>
@@ -193,27 +238,26 @@
   </div>
 
   <div class="locked-block">
-    <div class="locked-content">
-      <div style="font-size:13px; color:#2a4a3a; font-weight:600; margin-bottom:0.5rem;">✏️ Modifications de lignes identifiées</div>
+    <div class="locked-content urgent">
+      <div style="font-size:13px; color:#2a4a3a; font-weight:600; margin-bottom:0.5rem;">✏️ 8 modifications de lignes identifiées</div>
       <div style="display:flex; flex-direction:column; gap:0.3rem;">
         <div style="font-size:11px; color:var(--red);">❌ "Responsable de l'installation électrique..."</div>
         <div style="font-size:11px; color:var(--green-dark);">✅ "Expert en installation et mise en service d'équipements..."</div>
         <div style="font-size:11px; color:var(--red);">❌ "Gestion des équipes sur chantier..."</div>
         <div style="font-size:11px; color:var(--green-dark);">✅ "Supervision et management opérationnel d'équipes..."</div>
-        <div style="font-size:11px; color:var(--text-muted);">+ 4 autres modifications...</div>
+        <div style="font-size:11px; color:var(--text-muted); font-style:italic;">+ 6 autres modifications cachées...</div>
       </div>
     </div>
     <div class="locked-overlay">🔒</div>
   </div>
 
   <div class="locked-block">
-    <div class="locked-content">
-      <div style="font-size:13px; color:#2a4a3a; font-weight:600; margin-bottom:0.5rem;">🔑 Mots-clés manquants détectés</div>
+    <div class="locked-content urgent">
+      <div style="font-size:13px; color:#2a4a3a; font-weight:600; margin-bottom:0.5rem;">🔑 5 mots-clés manquants détectés</div>
       <div style="display:flex; flex-wrap:wrap; gap:0.4rem;">
         <span style="background:rgba(232,75,69,0.08); border:0.5px solid rgba(232,75,69,0.3); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">mot-clé 1</span>
         <span style="background:rgba(232,75,69,0.08); border:0.5px solid rgba(232,75,69,0.3); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">mot-clé 2</span>
-        <span style="background:rgba(232,75,69,0.08); border:0.5px solid rgba(232,75,69,0.3); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">mot-clé 3</span>
-        <span style="background:rgba(232,75,69,0.08); border:0.5px solid rgba(232,75,69,0.3); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">+ 2 autres</span>
+        <span style="background:rgba(232,75,69,0.08); border:0.5px solid rgba(232,75,69,0.3); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">+ 3 cachés</span>
       </div>
     </div>
     <div class="locked-overlay">🔒</div>
@@ -264,7 +308,13 @@
     <div class="locked-overlay">🔒</div>
   </div>
 
-  <button class="improve-btn" id="improveBtn" onclick="startOptimisation()">🔓 Débloquer mon rapport complet — 2,99€</button>
+  <!-- Prix barré + bouton -->
+  <div class="price-box">
+    <div class="price-old">Valeur normale : 9,99€</div>
+    <div class="price-new">2,99€ <span>aujourd'hui seulement</span></div>
+  </div>
+
+  <button class="improve-btn" id="improveBtn" onclick="startOptimisation()">🔓 Débloquer mon rapport complet</button>
   <div class="pay-loading" id="payLoading">⏳ Redirection vers le paiement sécurisé...</div>
   <div class="improve-sub">Paiement sécurisé · Une seule fois · Accès immédiat</div>
   <span class="back-link" onclick="goBack(1)">← Recommencer</span>
@@ -432,7 +482,7 @@
       if(data.url) window.location.href = data.url;
     } catch(e) {
       btn.disabled = false;
-      btn.textContent = '🔓 Débloquer mon rapport complet — 2,99€';
+      btn.textContent = '🔓 Débloquer mon rapport complet';
       loader.style.display = 'none';
       showError('Erreur lors du paiement. Réessayez.');
     }
