@@ -48,6 +48,11 @@
   .trust { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.2rem; flex-wrap: wrap; }
   .trust-item { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
   .trust-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+  .features-box { background: linear-gradient(135deg, rgba(29,158,117,0.06), rgba(24,95,165,0.06)); border: 0.5px solid rgba(29,158,117,0.2); border-radius: 14px; padding: 1.5rem; margin-top: 1.5rem; }
+  .features-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; color: var(--green-dark); margin-bottom: 1rem; text-align: center; }
+  .features-list { display: flex; flex-direction: column; gap: 0.6rem; }
+  .feature-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #2a4a3a; }
+  .feature-icon { color: var(--green); font-size: 15px; flex-shrink: 0; }
   .loading-screen { text-align: center; padding: 3rem 1rem; }
   .loading-screen h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
   .loading-screen p { font-size: 14px; color: var(--text-light); margin-bottom: 2rem; }
@@ -73,6 +78,10 @@
   .improve-btn:hover { background: var(--green-dark); transform: translateY(-2px); }
   .improve-sub { text-align: center; font-size: 12px; color: var(--text-muted); }
   .pay-loading { text-align: center; padding: 1rem; font-size: 14px; color: var(--text-light); display: none; }
+  .included-box { background: rgba(29,158,117,0.06); border: 0.5px solid rgba(29,158,117,0.2); border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem; }
+  .included-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.8rem; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+  .included-item { font-size: 12px; color: #2a4a3a; }
   .new-score-banner { background: linear-gradient(135deg, rgba(29,158,117,0.1), rgba(24,95,165,0.1)); border: 0.5px solid rgba(29,158,117,0.25); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-around; }
   .score-val { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; }
   .score-val.old { color: var(--blue); opacity: 0.5; text-decoration: line-through; }
@@ -138,6 +147,21 @@
     <span class="trust-item"><span class="trust-dot"></span>Résultat immédiat</span>
     <span class="trust-item"><span class="trust-dot"></span>100% confidentiel</span>
   </div>
+
+  <div class="features-box">
+    <div class="features-title">✨ Ce que vous obtenez pour 2,99€ après l'analyse</div>
+    <div class="features-list">
+      <div class="feature-item"><span class="feature-icon">✅</span> Score ATS — compatibilité avec les filtres automatiques</div>
+      <div class="feature-item"><span class="feature-icon">✅</span> Analyse détaillée par section notée sur 10</div>
+      <div class="feature-item"><span class="feature-icon">✅</span> Mots-clés manquants pour votre secteur</div>
+      <div class="feature-item"><span class="feature-icon">✅</span> Comparaison avec le marché 2026</div>
+      <div class="feature-item"><span class="feature-icon">✅</span> Modifications chirurgicales ligne par ligne</div>
+      <div class="feature-item"><span class="feature-icon">✅</span> 3 phrases d'accroche personnalisées à copier</div>
+      <div class="feature-item"><span class="feature-icon">✅</span> Compétences recommandées pour votre poste</div>
+      <div class="feature-item"><span class="feature-icon">✅</span> 5 questions d'entretien + conseils pour y répondre</div>
+      <div class="feature-item"><span class="feature-icon">✅</span> Lettre de motivation complète téléchargeable en PDF</div>
+    </div>
+  </div>
 </div>
 
 <div class="page" id="pageLoading">
@@ -174,6 +198,20 @@
   <button class="improve-btn" id="improveBtn" onclick="startOptimisation()">✨ Booster mon CV & obtenir ma lettre de motivation →</button>
   <div class="pay-loading" id="payLoading">⏳ Redirection vers le paiement sécurisé...</div>
   <div class="improve-sub">Paiement sécurisé · 2,99€ · Rapport complet inclus</div>
+  <div class="included-box">
+    <div class="included-title">Inclus dans votre rapport</div>
+    <div class="included-grid">
+      <div class="included-item">✅ Score ATS</div>
+      <div class="included-item">✅ Analyse sections</div>
+      <div class="included-item">✅ Mots-clés</div>
+      <div class="included-item">✅ Marché 2026</div>
+      <div class="included-item">✅ Modifications</div>
+      <div class="included-item">✅ 3 accroches</div>
+      <div class="included-item">✅ Compétences</div>
+      <div class="included-item">✅ 5 questions</div>
+      <div class="included-item">✅ Lettre PDF</div>
+    </div>
+  </div>
   <span class="back-link" onclick="goBack(1)">← Recommencer</span>
 </div>
 
