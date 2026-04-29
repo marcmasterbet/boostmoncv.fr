@@ -41,7 +41,11 @@ INSTRUCTIONS :
 4. INTERDICTIONS ABSOLUES :
    - Ne jamais inventer des expériences ou diplômes
    - Ne jamais changer les dates ou titres de postes
-   - Ne jamais suggérer des compétences que le candidat n'a pas
+
+5. POUR LES COMPÉTENCES :
+   - Tu PEUX suggérer des compétences manquantes mais cohérentes avec le parcours et le poste
+   - Indique clairement "À ajouter si vous la possédez :" pour les compétences suggérées
+   - Base-toi sur le secteur et l'expérience réelle du candidat
 
 FORMAT DE RÉPONSE :
 ## MODIFICATIONS DU CV
