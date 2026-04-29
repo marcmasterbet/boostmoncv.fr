@@ -396,7 +396,7 @@
     acc.innerHTML = '';
     if(data.phrasesAccroche) {
       data.phrasesAccroche.forEach((p, i) => {
-        acc.innerHTML += `<div class="accroche-item" onclick="copyText(this.dataset.text))" data-text="${p.replace(/"/g, '&quot;')}">
+        acc.innerHTML += `<div class="accroche-item" onclick="copyText(this.dataset.text)" data-text="${p.replace(/"/g, '&quot;')}">
           <div class="accroche-num">VERSION ${i+1}</div>
           ${p}
         </div>`;
@@ -496,12 +496,11 @@
   window.addEventListener('load', async () => {
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get('session_id');
-    const dataId = params.get('data_id');
-    if(sessionId && dataId) {
+    if(sessionId) {
       showPage('pageOptLoading');
       animateLoading(['opt1','opt2','opt3','opt4'], 'progressFill2', 5000, async () => {
         try {
-          const session = await fetch('/api/get-session?session_id=' + sessionId + '&data_id=' + dataId);
+          const session = await fetch('/api/get-session?session_id=' + sessionId);
           const sessionData = await session.json();
           if(sessionData.paid) {
             currentPoste = sessionData.poste;
