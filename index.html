@@ -196,15 +196,11 @@
     <h2>Votre rapport complet 🎯</h2>
     <p id="poste-label3">Optimisé pour —</p>
   </div>
-
-  <!-- Scores -->
   <div class="new-score-banner">
     <div><div class="score-val old" id="oldScoreDisplay">—</div><div class="score-lbl">Score initial</div></div>
     <div class="score-arrow">→</div>
     <div><div class="score-val new" id="newScoreDisplay">—</div><div class="score-lbl">Nouveau score</div></div>
   </div>
-
-  <!-- Score ATS -->
   <div class="ats-banner">
     <div>
       <div class="card-title" style="margin-bottom:0.2rem">Score ATS</div>
@@ -212,34 +208,22 @@
     </div>
     <div class="ats-score" id="atsScore">—%</div>
   </div>
-
-  <!-- Analyse sections -->
   <div class="section-divider">📊 Analyse par section</div>
   <div class="section-grid" id="sectionGrid"></div>
-
-  <!-- Mots-clés manquants -->
   <div class="card">
     <div class="card-title">🔑 Mots-clés manquants</div>
     <div id="motsCles"></div>
   </div>
-
-  <!-- Comparaison marché -->
   <div class="card">
     <div class="card-title">📈 Comparaison marché 2026</div>
     <p id="comparaisonMarche" style="font-size:13px; color:#4a6a5a; line-height:1.6;"></p>
   </div>
-
-  <!-- Modifications -->
   <div class="section-divider">✏️ Modifications recommandées</div>
   <div id="modifList"></div>
-
-  <!-- Phrases d'accroche -->
   <div class="card">
     <div class="card-title">💬 3 Phrases d'accroche — cliquez pour copier</div>
     <div id="accrocheList"></div>
   </div>
-
-  <!-- Compétences -->
   <div class="card">
     <div class="card-title">⚡ Compétences recommandées</div>
     <div style="margin-bottom:0.8rem">
@@ -251,17 +235,12 @@
       <div id="compAjouter" class="tag-list"></div>
     </div>
   </div>
-
-  <!-- Questions entretien -->
   <div class="section-divider">🎤 Questions d'entretien probables</div>
   <div id="questionsList"></div>
-
-  <!-- Lettre de motivation -->
   <div class="card">
     <div class="card-title">📄 Lettre de motivation</div>
     <div class="optimized-content" id="optimizedLetter"></div>
   </div>
-
   <button class="download-btn" onclick="downloadLetter()">⬇ Télécharger la lettre de motivation (PDF)</button>
   <span class="back-link" onclick="goBack(1)">← Analyser un autre CV</span>
 </div>
@@ -374,11 +353,8 @@
     document.getElementById('oldScoreDisplay').textContent = currentScore + '/100';
     document.getElementById('newScoreDisplay').textContent = data.newScore + '/100';
     document.getElementById('poste-label3').textContent = 'Optimisé pour ' + currentPoste;
-
-    // ATS
     document.getElementById('atsScore').textContent = data.scoreATS + '%';
 
-    // Sections
     const grid = document.getElementById('sectionGrid');
     grid.innerHTML = '';
     if(data.analyseSections) {
@@ -395,7 +371,6 @@
       });
     }
 
-    // Mots-clés
     const mc = document.getElementById('motsCles');
     mc.innerHTML = '<div class="tag-list">';
     if(data.motsClesManquants) {
@@ -403,10 +378,8 @@
     }
     mc.innerHTML += '</div>';
 
-    // Comparaison marché
     document.getElementById('comparaisonMarche').textContent = data.comparaisonMarche || '';
 
-    // Modifications
     const modif = document.getElementById('modifList');
     modif.innerHTML = '';
     if(data.modifications) {
@@ -419,19 +392,17 @@
       });
     }
 
-    // Phrases d'accroche
     const acc = document.getElementById('accrocheList');
     acc.innerHTML = '';
     if(data.phrasesAccroche) {
       data.phrasesAccroche.forEach((p, i) => {
-        acc.innerHTML += `<div class="accroche-item" onclick="copyText('${p.replace(/'/g, "\\'")}')">
+        acc.innerHTML += `<div class="accroche-item" onclick="copyText(this.dataset.text))" data-text="${p.replace(/"/g, '&quot;')}">
           <div class="accroche-num">VERSION ${i+1}</div>
           ${p}
         </div>`;
       });
     }
 
-    // Compétences
     const cm = document.getElementById('compMettre');
     const ca = document.getElementById('compAjouter');
     cm.innerHTML = '';
@@ -441,7 +412,6 @@
       (data.competencesRecommandees.aAjouter || []).forEach(c => { ca.innerHTML += `<span class="tag missing">${c}</span>`; });
     }
 
-    // Questions
     const ql = document.getElementById('questionsList');
     ql.innerHTML = '';
     if(data.questionsEntretien) {
@@ -453,9 +423,7 @@
       });
     }
 
-    // Lettre
     document.getElementById('optimizedLetter').textContent = data.lettre || '';
-
     showPage('page3');
   }
 
@@ -524,15 +492,16 @@
   function goBack(n) { showPage(n === 1 ? 'page1' : 'page' + n); }
   function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 4000); }
 
-  // Vérifier si retour de Stripe
+  // Retour de Stripe
   window.addEventListener('load', async () => {
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get('session_id');
-    if(sessionId) {
+    const dataId = params.get('data_id');
+    if(sessionId && dataId) {
       showPage('pageOptLoading');
       animateLoading(['opt1','opt2','opt3','opt4'], 'progressFill2', 5000, async () => {
         try {
-          const session = await fetch('/api/get-session?session_id=' + sessionId);
+          const session = await fetch('/api/get-session?session_id=' + sessionId + '&data_id=' + dataId);
           const sessionData = await session.json();
           if(sessionData.paid) {
             currentPoste = sessionData.poste;
