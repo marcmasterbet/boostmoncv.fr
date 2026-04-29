@@ -1,8 +1,4 @@
 const Stripe = require('stripe');
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
@@ -11,12 +7,8 @@ export default async function handler(req, res) {
   const { cvText, poste, score } = req.body;
 
   try {
-    // Générer un ID unique pour stocker les données
-    const dataId = crypto.randomUUID();
-    
-    // Sauvegarder dans /tmp
-    const tmpPath = path.join('/tmp', `cv_${dataId}.json`);
-    fs.writeFileSync(tmpPath, JSON.stringify({ cvText, poste, score }));
+    // Tronquer le CV à 500 chars max pour Stripe metadata
+    const cvTrunc = (cvText || '').substring(0, 490);
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -32,9 +24,13 @@ export default async function handler(req, res) {
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: `${req.headers.origin}/success.html?session_id={CHECKOUT_SESSION_ID}&data_id=${dataId}`,
+      success_url: `${req.headers.origin}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin}/`,
-      metadata: { data_id: dataId, poste, score: String(score) }
+      metadata: { 
+        cvText: cvTrunc,
+        poste: poste,
+        score: String(score)
+      }
     });
 
     res.status(200).json({ url: session.url });
