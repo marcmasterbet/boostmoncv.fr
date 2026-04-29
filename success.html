@@ -4,32 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Paiement réussi — BoostMonCV</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root { --cream: #f5f0e8; --green: #1D9E75; --green-dark: #0f6e56; --text: #1a2e25; --card: #fffdf7; }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
-  nav { display: flex; justify-content: center; align-items: center; padding: 1.2rem 1.5rem; border-bottom: 0.5px solid rgba(29,158,117,0.15); background: rgba(245,240,232,0.9); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 100; }
-  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--text); }
-  .logo span { color: var(--green); }
-  .container { max-width: 580px; margin: 0 auto; padding: 4rem 1.5rem; text-align: center; }
-  .icon { font-size: 4rem; margin-bottom: 1.5rem; }
-  h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem; }
-  p { font-size: 15px; color: #4a6a5a; line-height: 1.6; margin-bottom: 2rem; }
-  .btn { display: inline-block; background: var(--green); color: #fff; border: none; border-radius: 12px; padding: 16px 32px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; text-decoration: none; }
-  .btn:hover { background: var(--green-dark); }
-</style>
-</head>
-<body>
-<nav><div class="logo">Boost<span>MonCV</span></div></nav>
-<div class="container">
-  <div class="icon">🎉</div>
-  <h1>Paiement réussi !</h1>
-  <p>Merci pour votre confiance. Votre CV est en cours d'optimisation. Vous allez être redirigé automatiquement.</p>
-  <a class="btn" href="/">← Retour à l'accueil</a>
-</div>
 <script>
-  setTimeout(() => { window.location.href = '/'; }, 5000);
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+  const dataId = params.get('data_id');
+  if(sessionId && dataId) {
+    window.location.href = '/?session_id=' + sessionId + '&data_id=' + dataId;
+  } else {
+    window.location.href = '/';
+  }
 </script>
-</body>
+</head>
+<body></body>
 </html>
