@@ -6,51 +6,82 @@
 <title>Confidentialité — BoostMonCV</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root { --cream: #f5f0e8; --green: #1D9E75; --green-dark: #0f6e56; --text: #1a2e25; --text-light: #7a8f85; }
+  :root { --white: #ffffff; --grey-bg: #f4f6f9; --orange: #FF6B1A; --orange-dark: #e55a0f; --navy: #0a0f2e; --text: #1a1a2e; --text-light: #6b7280; --text-muted: #9ca3af; --border: #e5e7eb; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
-  nav { display: flex; justify-content: center; align-items: center; padding: 1.2rem 1.5rem; border-bottom: 0.5px solid rgba(29,158,117,0.15); background: rgba(245,240,232,0.9); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 100; }
-  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--text); }
-  .logo span { color: var(--green); }
-  .container { max-width: 680px; margin: 0 auto; padding: 3rem 1.5rem; }
-  h1 { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
-  .date { font-size: 13px; color: var(--text-light); margin-bottom: 2.5rem; }
-  h2 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin: 2rem 0 0.8rem; color: var(--green-dark); }
-  p { font-size: 15px; line-height: 1.7; color: #4a6a5a; margin-bottom: 0.8rem; }
-  .back-link { display: inline-block; margin-top: 2rem; font-size: 13px; color: var(--green-dark); text-decoration: underline; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--grey-bg); color: var(--text); min-height: 100vh; }
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--navy); display: flex; align-items: center; gap: 8px; text-decoration: none; }
+  .logo span { color: var(--orange); }
+  .logo-icon { background: var(--orange); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .container { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem; }
+  .page-header { background: var(--white); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  h1 { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--navy); margin-bottom: 0.5rem; }
+  .date { font-size: 13px; color: var(--text-muted); }
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  h2 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--orange); margin-bottom: 0.8rem; padding-left: 0.8rem; border-left: 3px solid var(--orange); }
+  p { font-size: 15px; line-height: 1.7; color: var(--text-light); margin-bottom: 0.8rem; }
+  .back-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--orange); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; transition: all 0.2s; margin-top: 1rem; }
+  .back-btn:hover { background: var(--orange-dark); transform: translateY(-1px); }
+  footer { text-align: center; padding: 2rem 1rem; border-top: 1px solid var(--border); background: var(--white); margin-top: 2rem; }
+  footer p { font-size: 12px; color: var(--text-muted); }
+  footer a { color: var(--orange); text-decoration: underline; }
 </style>
 </head>
 <body>
-<nav><div class="logo">Boost<span>MonCV</span></div></nav>
+<nav>
+  <a href="/" class="logo"><div class="logo-icon">🚀</div>boost<span>MonCV</span></a>
+</nav>
 <div class="container">
-  <h1>Politique de Confidentialité</h1>
-  <p class="date">Dernière mise à jour : avril 2026</p>
+  <div class="page-header">
+    <h1>Politique de Confidentialité</h1>
+    <p class="date">Dernière mise à jour : avril 2026</p>
+  </div>
 
-  <h2>1. Responsable du traitement</h2>
-  <p>BoostMonCV est édité par Marc Bretzner. Contact : marc.masterbet@gmail.com </p>
+  <div class="card">
+    <h2>1. Responsable du traitement</h2>
+    <p>BoostMonCV est édité par Marc Bretzner. Contact : marc.masterbet@gmail.com</p>
+  </div>
 
-  <h2>2. Données collectées</h2>
-  <p>Lors de l'utilisation de notre service, nous traitons temporairement le contenu de votre CV (texte extrait du PDF) uniquement pour générer l'analyse et l'optimisation. Ces données ne sont pas stockées après la session.</p>
+  <div class="card">
+    <h2>2. Données collectées</h2>
+    <p>Lors de l'utilisation de notre service, nous traitons temporairement le contenu de votre CV (texte extrait du PDF) uniquement pour générer l'analyse et l'optimisation. Ces données ne sont pas stockées après la session.</p>
+  </div>
 
-  <h2>3. Finalité du traitement</h2>
-  <p>Les données de votre CV sont utilisées exclusivement pour fournir le service d'analyse et d'optimisation par intelligence artificielle. Elles ne sont jamais utilisées à des fins commerciales ou partagées avec des tiers.</p>
+  <div class="card">
+    <h2>3. Finalité du traitement</h2>
+    <p>Les données de votre CV sont utilisées exclusivement pour fournir le service d'analyse et d'optimisation par intelligence artificielle. Elles ne sont jamais utilisées à des fins commerciales ou partagées avec des tiers.</p>
+  </div>
 
-  <h2>4. Conservation des données</h2>
-  <p>Aucune donnée personnelle n'est conservée sur nos serveurs après la fin de votre session. Votre CV est traité en temps réel et immédiatement supprimé.</p>
+  <div class="card">
+    <h2>4. Conservation des données</h2>
+    <p>Aucune donnée personnelle n'est conservée sur nos serveurs après la fin de votre session. Votre CV est traité en temps réel et immédiatement supprimé.</p>
+  </div>
 
-  <h2>5. Partage des données</h2>
-  <p>Le texte de votre CV est transmis à l'API OpenAI pour le traitement par intelligence artificielle. OpenAI s'engage à ne pas utiliser les données envoyées via API pour entraîner ses modèles.</p>
+  <div class="card">
+    <h2>5. Partage des données</h2>
+    <p>Le texte de votre CV est transmis à l'API OpenAI pour le traitement par intelligence artificielle. OpenAI s'engage à ne pas utiliser les données envoyées via API pour entraîner ses modèles.</p>
+  </div>
 
-  <h2>6. Vos droits</h2>
-  <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Contactez-nous à support@boostmoncv.fr pour exercer ces droits.</p>
+  <div class="card">
+    <h2>6. Vos droits</h2>
+    <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Contactez-nous à marc.masterbet@gmail.com pour exercer ces droits.</p>
+  </div>
 
-  <h2>7. Cookies</h2>
-  <p>BoostMonCV n'utilise pas de cookies de tracking. Aucun cookie publicitaire n'est déposé sur votre appareil.</p>
+  <div class="card">
+    <h2>7. Cookies</h2>
+    <p>BoostMonCV n'utilise pas de cookies de tracking. Aucun cookie publicitaire n'est déposé sur votre appareil.</p>
+  </div>
 
-  <h2>8. Contact</h2>
-  <p>Pour toute question relative à vos données : support@boostmoncv.fr</p>
+  <div class="card">
+    <h2>8. Contact</h2>
+    <p>Pour toute question relative à vos données : marc.masterbet@gmail.com</p>
+  </div>
 
-  <a class="back-link" href="/">← Retour à l'accueil</a>
+  <a href="/" class="back-btn">← Retour à l'accueil</a>
 </div>
+
+<footer>
+  <p>© 2026 BoostMonCV &nbsp;·&nbsp; <a href="/cgu.html">CGU</a> &nbsp;·&nbsp; <a href="/confidentialite.html">Confidentialité</a> &nbsp;·&nbsp; <a href="/support.html">Support</a></p>
+</footer>
 </body>
 </html>
