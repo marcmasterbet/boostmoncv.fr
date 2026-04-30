@@ -9,385 +9,480 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
-    --cream: #f5f0e8;
-    --card: #fffdf7;
+    --white: #ffffff;
+    --grey-bg: #f4f6f9;
+    --grey-card: #e8ecf2;
+    --orange: #FF6B1A;
+    --orange-dark: #e55a0f;
+    --orange-light: rgba(255,107,26,0.1);
+    --navy: #0a0f2e;
+    --navy-light: #1a2252;
+    --text: #1a1a2e;
+    --text-light: #6b7280;
+    --text-muted: #9ca3af;
+    --border: #e5e7eb;
     --green: #1D9E75;
-    --green-dark: #0f6e56;
-    --blue: #185FA5;
-    --blue-dark: #0c447c;
-    --text: #1a2e25;
-    --text-light: #7a8f85;
-    --text-muted: #a0b5aa;
-    --border: rgba(29,158,117,0.2);
-    --orange: #E8821A;
     --red: #E84545;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
-  .page { display: none; padding: 2.5rem 1.5rem 4rem; max-width: 580px; margin: 0 auto; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--grey-bg); color: var(--text); min-height: 100vh; }
+
+  /* NAV */
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+  .logo span { color: var(--orange); }
+  .logo-icon { background: var(--orange); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-link { font-size: 14px; color: var(--text-light); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+  .nav-link:hover { color: var(--orange); }
+  .nav-cta { background: var(--orange); color: #fff; padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none; transition: all 0.2s; }
+  .nav-cta:hover { background: var(--orange-dark); }
+
+  /* PAGES */
+  .page { display: none; }
   .page.active { display: block; }
-  nav { display: flex; justify-content: center; align-items: center; padding: 1.2rem 1.5rem; border-bottom: 0.5px solid rgba(29,158,117,0.15); background: rgba(245,240,232,0.9); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 100; }
-  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--text); }
-  .logo span { color: var(--green); }
-  .badge { display: inline-block; background: rgba(29,158,117,0.13); border: 0.5px solid rgba(29,158,117,0.3); color: var(--green-dark); font-size: 12px; padding: 5px 14px; border-radius: 20px; margin-bottom: 1.5rem; letter-spacing: 0.05em; }
-  h1 { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 1rem; text-align: center; color: #111a16; }
-  h1 span { color: var(--green); }
-  .subtitle { font-size: 15px; color: var(--text-light); max-width: 400px; margin: 0 auto 2rem; line-height: 1.6; text-align: center; }
-  .upload-zone { background: var(--card); border: 1.5px dashed rgba(29,158,117,0.35); border-radius: 16px; padding: 2.5rem 2rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.2s; text-align: center; box-shadow: 0 2px 16px rgba(0,0,0,0.05); }
-  .upload-zone:hover { border-color: var(--green); background: #f5fbf7; }
-  .upload-zone.has-file { border-color: var(--green); background: #eef8f3; border-style: solid; }
-  .upload-icon { font-size: 32px; margin-bottom: 0.5rem; }
-  .upload-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 0.3rem; color: #111a16; }
-  .upload-sub { font-size: 12px; color: var(--text-muted); }
-  .input-field { width: 100%; background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; margin-bottom: 1rem; outline: none; transition: border 0.2s; box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
-  .input-field:focus { border-color: var(--green); }
-  .input-field::placeholder { color: #1a2e25; }
-  .cta-btn { width: 100%; background: var(--green); color: #fff; border: none; border-radius: 10px; padding: 16px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-  .cta-btn:hover { background: var(--green-dark); transform: translateY(-1px); }
-  .cta-btn:disabled { background: #c8d8d2; color: #fff; cursor: not-allowed; transform: none; }
-  .trust { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.2rem; flex-wrap: wrap; }
+
+  /* PAGE 1 - HERO */
+  .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 65px); }
+  .hero-left { background: var(--white); display: flex; align-items: center; justify-content: center; padding: 3rem; border-right: 1px solid var(--border); }
+  .cv-preview { width: 100%; max-width: 320px; background: var(--white); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); padding: 1.5rem; border: 1px solid var(--border); }
+  .cv-header-preview { display: flex; gap: 1rem; margin-bottom: 1.2rem; align-items: center; }
+  .cv-photo { width: 60px; height: 60px; background: var(--grey-card); border-radius: 8px; flex-shrink: 0; }
+  .cv-name-lines { flex: 1; }
+  .cv-line { height: 10px; background: var(--navy); border-radius: 4px; margin-bottom: 6px; }
+  .cv-line.short { width: 60%; background: var(--text-muted); }
+  .cv-line.orange { background: var(--orange); width: 40%; height: 6px; }
+  .cv-section { margin-bottom: 1rem; }
+  .cv-section-title { height: 8px; background: var(--orange); border-radius: 4px; width: 35%; margin-bottom: 8px; }
+  .cv-text-line { height: 6px; background: var(--grey-card); border-radius: 3px; margin-bottom: 5px; }
+  .cv-text-line.w90 { width: 90%; }
+  .cv-text-line.w75 { width: 75%; }
+  .cv-text-line.w60 { width: 60%; }
+  .cv-text-line.w85 { width: 85%; }
+
+  .hero-right { display: flex; align-items: center; justify-content: center; padding: 3rem; background: var(--grey-bg); }
+  .hero-content { max-width: 420px; width: 100%; }
+  .badge { display: inline-block; background: var(--orange-light); border: 1px solid rgba(255,107,26,0.3); color: var(--orange); font-size: 12px; padding: 5px 14px; border-radius: 20px; margin-bottom: 1.2rem; letter-spacing: 0.05em; font-weight: 600; }
+  .hero-title { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; line-height: 1.15; margin-bottom: 0.8rem; color: var(--navy); }
+  .hero-title span { color: var(--orange); }
+  .hero-subtitle { font-size: 15px; color: var(--text-light); margin-bottom: 2rem; line-height: 1.6; }
+  .upload-zone { background: var(--white); border: 2px dashed rgba(255,107,26,0.35); border-radius: 12px; padding: 2rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.2s; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .upload-zone:hover { border-color: var(--orange); background: var(--orange-light); }
+  .upload-zone.has-file { border-color: var(--orange); background: rgba(255,107,26,0.05); border-style: solid; }
+  .upload-icon { font-size: 28px; margin-bottom: 0.4rem; }
+  .upload-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 0.2rem; color: var(--navy); }
+  .upload-sub { font-size: 11px; color: var(--text-muted); }
+  .input-field { width: 100%; background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; padding: 13px 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; margin-bottom: 1rem; outline: none; transition: border 0.2s; }
+  .input-field:focus { border-color: var(--orange); }
+  .input-field::placeholder { color: var(--text-muted); }
+  .cta-btn { width: 100%; background: var(--orange); color: #fff; border: none; border-radius: 10px; padding: 15px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(255,107,26,0.3); }
+  .cta-btn:hover { background: var(--orange-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,107,26,0.4); }
+  .cta-btn:disabled { background: var(--grey-card); color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+  .trust { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap; }
   .trust-item { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
-  .trust-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+  .trust-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); }
+  .error-msg { background: rgba(232,75,69,0.08); border: 1px solid rgba(232,75,69,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--red); margin-bottom: 1rem; display: none; }
+
+  /* PAGES INTERNES */
+  .inner-page { max-width: 580px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   .loading-screen { text-align: center; padding: 3rem 1rem; }
-  .loading-screen h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .loading-screen h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--navy); }
   .loading-screen p { font-size: 14px; color: var(--text-light); margin-bottom: 2rem; }
-  .progress-bar { width: 100%; height: 6px; background: rgba(29,158,117,0.15); border-radius: 10px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--green); border-radius: 10px; width: 0%; transition: width 0.3s ease; }
+  .progress-bar { width: 100%; height: 6px; background: var(--grey-card); border-radius: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--orange); border-radius: 10px; width: 0%; transition: width 0.3s ease; }
   .loading-steps { margin-top: 1.5rem; text-align: left; }
   .step { display: flex; gap: 10px; align-items: center; padding: 8px 0; font-size: 13px; color: var(--text-muted); }
-  .step.done { color: var(--green); }
+  .step.done { color: var(--orange); }
   .step.active { color: var(--text); font-weight: 500; }
   .result-header { text-align: center; margin-bottom: 2rem; }
-  .result-header h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 0.3rem; }
+  .result-header h2 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 0.3rem; color: var(--navy); }
   .result-header p { font-size: 13px; color: var(--text-light); }
   .score-circle { width: 150px; height: 150px; margin: 0 auto 1.5rem; position: relative; }
   .score-circle svg { transform: rotate(-90deg); }
-  .score-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 800; color: var(--blue); }
+  .score-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 800; color: var(--orange); }
   .score-label { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--text-muted); white-space: nowrap; }
-  .card { background: var(--card); border: 0.5px solid rgba(29,158,117,0.15); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 14px rgba(0,0,0,0.04); }
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
   .card-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
   .critique-item { display: flex; gap: 10px; margin-bottom: 0.8rem; align-items: flex-start; }
-  .critique-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); flex-shrink: 0; margin-top: 6px; }
-  .critique-text { font-size: 14px; color: #4a6a5a; line-height: 1.5; }
-  .improve-btn { width: 100%; background: var(--green); color: #fff; border: none; border-radius: 12px; padding: 18px; font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-bottom: 0.5rem; }
-  .improve-btn:hover { background: var(--green-dark); transform: translateY(-2px); }
+  .critique-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); flex-shrink: 0; margin-top: 6px; }
+  .critique-text { font-size: 14px; color: var(--text-light); line-height: 1.5; }
+  .improve-btn { width: 100%; background: var(--orange); color: #fff; border: none; border-radius: 12px; padding: 18px; font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-bottom: 0.5rem; box-shadow: 0 4px 15px rgba(255,107,26,0.3); }
+  .improve-btn:hover { background: var(--orange-dark); transform: translateY(-2px); box-shadow: 0 6px 25px rgba(255,107,26,0.4); }
   .improve-sub { text-align: center; font-size: 12px; color: var(--text-muted); margin-bottom: 1rem; }
   .pay-loading { text-align: center; padding: 1rem; font-size: 14px; color: var(--text-light); display: none; }
   .locked-block { position: relative; margin-bottom: 0.6rem; }
-  .locked-content { background: var(--card); border: 0.5px solid rgba(29,158,117,0.15); border-radius: 12px; padding: 1rem; filter: blur(3px); user-select: none; pointer-events: none; }
-  .locked-content.urgent { border-color: rgba(232,75,69,0.3); background: rgba(232,75,69,0.03); }
+  .locked-content { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; filter: blur(3px); user-select: none; pointer-events: none; }
+  .locked-content.urgent { border-color: rgba(232,75,69,0.3); background: rgba(232,75,69,0.02); }
   .locked-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
-  .alert-banner { background: rgba(232,75,69,0.08); border: 0.5px solid rgba(232,75,69,0.3); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem; }
+  .alert-banner { background: rgba(232,75,69,0.06); border: 1px solid rgba(232,75,69,0.2); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem; }
   .alert-banner-icon { font-size: 1.5rem; flex-shrink: 0; }
-  .alert-banner-text { font-size: 13px; color: #a32d2d; line-height: 1.5; }
+  .alert-banner-text { font-size: 13px; color: #c0392b; line-height: 1.5; }
   .alert-banner-text strong { font-weight: 700; display: block; margin-bottom: 0.2rem; }
   .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
-  .counter-item { background: var(--card); border: 0.5px solid rgba(29,158,117,0.15); border-radius: 10px; padding: 0.8rem 0.5rem; text-align: center; }
-  .counter-num { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--red); }
+  .counter-item { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 0.5rem; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+  .counter-num { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--orange); }
   .counter-label { font-size: 10px; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.3; }
   .unlock-header { text-align: center; margin-bottom: 1rem; }
-  .unlock-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 0.3rem; }
+  .unlock-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--navy); margin-bottom: 0.3rem; }
   .unlock-subtitle { font-size: 12px; color: var(--text-muted); }
   .price-box { text-align: center; margin-bottom: 0.8rem; }
   .price-old { font-size: 14px; color: var(--text-muted); text-decoration: line-through; margin-bottom: 0.2rem; }
-  .price-new { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--green); }
+  .price-new { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--orange); }
   .price-new span { font-size: 13px; font-weight: 400; color: var(--text-muted); }
-  .new-score-banner { background: linear-gradient(135deg, rgba(29,158,117,0.1), rgba(24,95,165,0.1)); border: 0.5px solid rgba(29,158,117,0.25); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-around; }
+  .new-score-banner { background: linear-gradient(135deg, rgba(255,107,26,0.08), rgba(10,15,46,0.05)); border: 1px solid rgba(255,107,26,0.2); border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-around; }
   .score-val { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; }
-  .score-val.old { color: var(--blue); opacity: 0.5; text-decoration: line-through; }
-  .score-val.new { color: var(--green); }
+  .score-val.old { color: var(--text-muted); text-decoration: line-through; }
+  .score-val.new { color: var(--orange); }
   .score-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; text-align: center; }
-  .score-arrow { font-size: 1.5rem; color: var(--green); }
-  .ats-banner { background: var(--card); border: 0.5px solid rgba(29,158,117,0.15); border-radius: 14px; padding: 1.2rem 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; }
+  .score-arrow { font-size: 1.5rem; color: var(--orange); }
+  .ats-banner { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
   .ats-label { font-size: 13px; color: var(--text-light); }
   .ats-score { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--orange); }
   .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
-  .section-card { background: var(--card); border: 0.5px solid rgba(29,158,117,0.15); border-radius: 12px; padding: 1rem; }
+  .section-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
   .section-name { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
   .section-note { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 0.3rem; }
-  .section-comment { font-size: 11px; color: #4a6a5a; line-height: 1.4; }
+  .section-comment { font-size: 11px; color: var(--text-light); line-height: 1.4; }
   .note-good { color: var(--green); }
   .note-mid { color: var(--orange); }
   .note-bad { color: var(--red); }
   .tag-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
-  .tag { background: rgba(29,158,117,0.1); border: 0.5px solid rgba(29,158,117,0.3); color: var(--green-dark); font-size: 12px; padding: 4px 10px; border-radius: 20px; }
-  .tag.missing { background: rgba(232,75,69,0.08); border-color: rgba(232,75,69,0.3); color: var(--red); }
-  .modif-item { background: var(--cream); border-radius: 10px; padding: 1rem; margin-bottom: 0.8rem; }
+  .tag { background: var(--orange-light); border: 1px solid rgba(255,107,26,0.3); color: var(--orange); font-size: 12px; padding: 4px 10px; border-radius: 20px; }
+  .tag.missing { background: rgba(232,75,69,0.06); border-color: rgba(232,75,69,0.3); color: var(--red); }
+  .modif-item { background: var(--grey-bg); border-radius: 10px; padding: 1rem; margin-bottom: 0.8rem; border: 1px solid var(--border); }
   .modif-old { font-size: 12px; color: var(--red); margin-bottom: 0.4rem; }
-  .modif-old span { background: rgba(232,75,69,0.1); padding: 2px 6px; border-radius: 4px; font-style: italic; }
-  .modif-new { font-size: 12px; color: var(--green-dark); margin-bottom: 0.4rem; }
-  .modif-new span { background: rgba(29,158,117,0.1); padding: 2px 6px; border-radius: 4px; font-weight: 500; }
+  .modif-old span { background: rgba(232,75,69,0.08); padding: 2px 6px; border-radius: 4px; font-style: italic; }
+  .modif-new { font-size: 12px; color: var(--green); margin-bottom: 0.4rem; }
+  .modif-new span { background: rgba(29,158,117,0.08); padding: 2px 6px; border-radius: 4px; font-weight: 500; }
   .modif-why { font-size: 11px; color: var(--text-muted); }
-  .accroche-item { background: var(--cream); border-left: 3px solid var(--green); padding: 0.8rem 1rem; border-radius: 0 8px 8px 0; margin-bottom: 0.6rem; font-size: 13px; color: #2a4a3a; line-height: 1.5; cursor: pointer; transition: all 0.2s; }
-  .accroche-item:hover { background: rgba(29,158,117,0.1); }
-  .accroche-num { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: var(--green); margin-bottom: 0.3rem; }
-  .question-item { background: var(--cream); border-radius: 10px; padding: 1rem; margin-bottom: 0.8rem; }
-  .question-q { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
-  .question-c { font-size: 12px; color: #4a6a5a; line-height: 1.5; }
-  .optimized-content { white-space: pre-wrap; font-size: 13px; line-height: 1.7; color: #2a4a3a; max-height: 300px; overflow-y: auto; }
-  .download-btn { width: 100%; background: var(--blue); color: #fff; border: none; border-radius: 12px; padding: 16px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-bottom: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .download-btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
-  .back-link { display: block; text-align: center; font-size: 13px; color: var(--green-dark); margin-top: 1rem; cursor: pointer; text-decoration: underline; font-weight: 500; }
-  .error-msg { background: rgba(226,75,74,0.08); border: 0.5px solid rgba(226,75,74,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #a32d2d; margin-bottom: 1rem; display: none; }
-  .section-divider { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--text); margin: 1.5rem 0 0.8rem; }
+  .accroche-item { background: var(--grey-bg); border-left: 3px solid var(--orange); padding: 0.8rem 1rem; border-radius: 0 8px 8px 0; margin-bottom: 0.6rem; font-size: 13px; color: var(--text-light); line-height: 1.5; cursor: pointer; transition: all 0.2s; }
+  .accroche-item:hover { background: var(--orange-light); }
+  .accroche-num { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: var(--orange); margin-bottom: 0.3rem; }
+  .question-item { background: var(--grey-bg); border-radius: 10px; padding: 1rem; margin-bottom: 0.8rem; border: 1px solid var(--border); }
+  .question-q { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem; }
+  .question-c { font-size: 12px; color: var(--text-light); line-height: 1.5; }
+  .optimized-content { white-space: pre-wrap; font-size: 13px; line-height: 1.7; color: var(--text-light); max-height: 300px; overflow-y: auto; }
+  .download-btn { width: 100%; background: var(--orange); color: #fff; border: none; border-radius: 12px; padding: 16px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-bottom: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(255,107,26,0.3); }
+  .download-btn:hover { background: var(--orange-dark); transform: translateY(-1px); }
+  .back-link { display: block; text-align: center; font-size: 13px; color: var(--orange); margin-top: 1rem; cursor: pointer; text-decoration: underline; font-weight: 500; }
+  .section-divider { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--navy); margin: 1.5rem 0 0.8rem; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { display: none; }
+    .hero-right { padding: 2rem 1.5rem; min-height: calc(100vh - 65px); }
+    .nav-links { display: none; }
+  }
 </style>
 </head>
 <body>
-<nav><div class="logo">Boost<span>MonCV</span></div></nav>
 
-<!-- PAGE 1 : Simple et épurée -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">🚀</div>
+    boost<span>MonCV</span>
+  </div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Accueil</a>
+    <a href="/support.html" class="nav-link">Support</a>
+    <a href="/cgu.html" class="nav-link">CGU</a>
+  </div>
+</nav>
+
+<!-- PAGE 1 -->
 <div class="page active" id="page1">
-  <div style="text-align:center; margin-top:1rem">
-    <div class="badge">Analyse rapide et instantanée</div>
-  </div>
-  <h1>Votre CV est-il prêt à<br><span>décrocher des entretiens ?</span></h1>
-  <p class="subtitle">Obtenez une analyse personnalisée de votre CV en quelques secondes. Sans inscription.</p>
-  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('cv-upload').click()">
-    <input type="file" id="cv-upload" accept=".pdf" style="display:none" onchange="onFileSelected(this)">
-    <div class="upload-icon" id="uploadIcon">📄</div>
-    <div class="upload-title" id="uploadTitle">Déposez votre CV ici</div>
-    <div class="upload-sub" id="uploadSub">PDF uniquement · Glisser-déposer ou cliquer</div>
-  </div>
-  <div class="error-msg" id="errorMsg"></div>
-  <input class="input-field" type="text" id="poste" placeholder="Poste visé — ex: Directrice d'agence, Comptable...">
-  <button class="cta-btn" id="analyzeBtn" onclick="startAnalysis()" disabled>Analyser mon CV</button>
-  <div class="trust">
-    <span class="trust-item"><span class="trust-dot"></span>Sans inscription</span>
-    <span class="trust-item"><span class="trust-dot"></span>Résultat immédiat</span>
-    <span class="trust-item"><span class="trust-dot"></span>100% confidentiel</span>
+  <div class="hero">
+    <div class="hero-left">
+      <div class="cv-preview">
+        <div class="cv-header-preview">
+          <div class="cv-photo"></div>
+          <div class="cv-name-lines">
+            <div class="cv-line"></div>
+            <div class="cv-line short"></div>
+            <div class="cv-line orange"></div>
+          </div>
+        </div>
+        <div class="cv-section">
+          <div class="cv-section-title"></div>
+          <div class="cv-text-line w90"></div>
+          <div class="cv-text-line w75"></div>
+          <div class="cv-text-line w85"></div>
+          <div class="cv-text-line w60"></div>
+        </div>
+        <div class="cv-section">
+          <div class="cv-section-title"></div>
+          <div class="cv-text-line w90"></div>
+          <div class="cv-text-line w85"></div>
+          <div class="cv-text-line w75"></div>
+          <div class="cv-text-line w60"></div>
+        </div>
+        <div class="cv-section">
+          <div class="cv-section-title"></div>
+          <div class="cv-text-line w75"></div>
+          <div class="cv-text-line w60"></div>
+          <div class="cv-text-line w85"></div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-content">
+        <div class="badge">🚀 Analyse rapide et instantanée</div>
+        <h1 class="hero-title">Notre IA passe<br>au peigne fin<br><span>votre CV</span></h1>
+        <p class="hero-subtitle">Obtenez une analyse personnalisée en quelques secondes. Sans inscription.</p>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('cv-upload').click()">
+          <input type="file" id="cv-upload" accept=".pdf" style="display:none" onchange="onFileSelected(this)">
+          <div class="upload-icon" id="uploadIcon">📄</div>
+          <div class="upload-title" id="uploadTitle">Déposez votre CV ici</div>
+          <div class="upload-sub" id="uploadSub">PDF uniquement · Glisser-déposer ou cliquer</div>
+        </div>
+        <div class="error-msg" id="errorMsg"></div>
+        <input class="input-field" type="text" id="poste" placeholder="Poste visé — ex: Comptable, Directeur...">
+        <button class="cta-btn" id="analyzeBtn" onclick="startAnalysis()" disabled>Analyser mon CV</button>
+        <div class="trust">
+          <span class="trust-item"><span class="trust-dot"></span>Sans inscription</span>
+          <span class="trust-item"><span class="trust-dot"></span>Résultat immédiat</span>
+          <span class="trust-item"><span class="trust-dot"></span>100% confidentiel</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- PAGE LOADING -->
 <div class="page" id="pageLoading">
-  <div class="loading-screen">
-    <h3>Analyse en cours...</h3>
-    <p>Nous analysons votre CV en détail</p>
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="loading-steps">
-      <div class="step active" id="step1"><span>🔍</span> Lecture du CV</div>
-      <div class="step" id="step2"><span>🎯</span> Analyse des mots-clés</div>
-      <div class="step" id="step3"><span>📊</span> Calcul du score</div>
-      <div class="step" id="step4"><span>✍️</span> Rédaction de la critique</div>
+  <div class="inner-page">
+    <div class="loading-screen">
+      <h3>Analyse en cours...</h3>
+      <p>Nous analysons votre CV en détail</p>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="loading-steps">
+        <div class="step active" id="step1"><span>🔍</span> Lecture du CV</div>
+        <div class="step" id="step2"><span>🎯</span> Analyse des mots-clés</div>
+        <div class="step" id="step3"><span>📊</span> Calcul du score</div>
+        <div class="step" id="step4"><span>✍️</span> Rédaction de la critique</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- PAGE 2 : Résultat + aperçu flou -->
+<!-- PAGE 2 -->
 <div class="page" id="page2">
-  <div class="result-header">
-    <h2>Analyse de votre CV</h2>
-    <p id="poste-label">Pour le poste de —</p>
-  </div>
-  <div class="score-circle">
-    <svg width="150" height="150" viewBox="0 0 150 150">
-      <circle cx="75" cy="75" r="62" fill="none" stroke="rgba(24,95,165,0.1)" stroke-width="10"/>
-      <circle id="scoreArc" cx="75" cy="75" r="62" fill="none" stroke="#185FA5" stroke-width="10" stroke-linecap="round" stroke-dasharray="390" stroke-dashoffset="390"/>
-    </svg>
-    <div class="score-num" id="scoreNum">0</div>
-    <div class="score-label">score sur 100</div>
-  </div>
-  <div class="card">
-    <div class="card-title">Points à améliorer</div>
-    <div id="critiqueList"></div>
-  </div>
+  <div class="inner-page">
+    <div class="result-header">
+      <h2>Analyse de votre CV</h2>
+      <p id="poste-label">Pour le poste de —</p>
+    </div>
+    <div class="score-circle">
+      <svg width="150" height="150" viewBox="0 0 150 150">
+        <circle cx="75" cy="75" r="62" fill="none" stroke="rgba(255,107,26,0.1)" stroke-width="10"/>
+        <circle id="scoreArc" cx="75" cy="75" r="62" fill="none" stroke="#FF6B1A" stroke-width="10" stroke-linecap="round" stroke-dasharray="390" stroke-dashoffset="390"/>
+      </svg>
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-label">score sur 100</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Points à améliorer</div>
+      <div id="critiqueList"></div>
+    </div>
 
-  <!-- Alerte urgence -->
-  <div class="alert-banner">
-    <div class="alert-banner-icon">⚠️</div>
-    <div class="alert-banner-text">
-      <strong>Votre CV a des lacunes critiques pour ce poste</strong>
-      Notre IA a identifié des problèmes qui réduisent significativement vos chances d'être sélectionné.
-    </div>
-  </div>
-
-  <!-- Compteurs -->
-  <div class="counter-grid">
-    <div class="counter-item">
-      <div class="counter-num">8</div>
-      <div class="counter-label">modifications identifiées</div>
-    </div>
-    <div class="counter-item">
-      <div class="counter-num">5</div>
-      <div class="counter-label">mots-clés manquants</div>
-    </div>
-    <div class="counter-item">
-      <div class="counter-num">3</div>
-      <div class="counter-label">phrases d'accroche</div>
-    </div>
-    <div class="counter-item">
-      <div class="counter-num">5</div>
-      <div class="counter-label">questions d'entretien</div>
-    </div>
-  </div>
-
-  <!-- Aperçu flou -->
-  <div class="unlock-header">
-    <div class="unlock-title">🔒 Votre rapport complet est prêt</div>
-    <div class="unlock-subtitle">Débloquez l'accès pour voir tout ce qui a été préparé pour vous</div>
-  </div>
-
-  <div class="locked-block">
-    <div class="locked-content urgent">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div style="font-size:13px; color:#2a4a3a; font-weight:600;">📊 Score ATS — Compatibilité filtres automatiques</div>
-        <div style="font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:800; color:var(--orange);">??%</div>
+    <div class="alert-banner">
+      <div class="alert-banner-icon">⚠️</div>
+      <div class="alert-banner-text">
+        <strong>Votre CV a des lacunes critiques pour ce poste</strong>
+        Notre IA a identifié des problèmes qui réduisent significativement vos chances d'être sélectionné.
       </div>
     </div>
-    <div class="locked-overlay">🔒</div>
-  </div>
 
-  <div class="locked-block">
-    <div class="locked-content urgent">
-      <div style="font-size:13px; color:#2a4a3a; font-weight:600; margin-bottom:0.5rem;">✏️ 8 modifications de lignes identifiées</div>
-      <div style="display:flex; flex-direction:column; gap:0.3rem;">
-        <div style="font-size:11px; color:var(--red);">❌ "Responsable de l'installation électrique..."</div>
-        <div style="font-size:11px; color:var(--green-dark);">✅ "Expert en installation et mise en service d'équipements..."</div>
-        <div style="font-size:11px; color:var(--red);">❌ "Gestion des équipes sur chantier..."</div>
-        <div style="font-size:11px; color:var(--green-dark);">✅ "Supervision et management opérationnel d'équipes..."</div>
-        <div style="font-size:11px; color:var(--text-muted); font-style:italic;">+ 6 autres modifications cachées...</div>
+    <div class="counter-grid">
+      <div class="counter-item">
+        <div class="counter-num">8</div>
+        <div class="counter-label">modifications identifiées</div>
+      </div>
+      <div class="counter-item">
+        <div class="counter-num">5</div>
+        <div class="counter-label">mots-clés manquants</div>
+      </div>
+      <div class="counter-item">
+        <div class="counter-num">3</div>
+        <div class="counter-label">phrases d'accroche</div>
+      </div>
+      <div class="counter-item">
+        <div class="counter-num">5</div>
+        <div class="counter-label">questions d'entretien</div>
       </div>
     </div>
-    <div class="locked-overlay">🔒</div>
-  </div>
 
-  <div class="locked-block">
-    <div class="locked-content urgent">
-      <div style="font-size:13px; color:#2a4a3a; font-weight:600; margin-bottom:0.5rem;">🔑 5 mots-clés manquants détectés</div>
-      <div style="display:flex; flex-wrap:wrap; gap:0.4rem;">
-        <span style="background:rgba(232,75,69,0.08); border:0.5px solid rgba(232,75,69,0.3); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">mot-clé 1</span>
-        <span style="background:rgba(232,75,69,0.08); border:0.5px solid rgba(232,75,69,0.3); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">mot-clé 2</span>
-        <span style="background:rgba(232,75,69,0.08); border:0.5px solid rgba(232,75,69,0.3); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">+ 3 cachés</span>
+    <div class="unlock-header">
+      <div class="unlock-title">🔒 Votre rapport complet est prêt</div>
+      <div class="unlock-subtitle">Débloquez l'accès pour voir tout ce qui a été préparé pour vous</div>
+    </div>
+
+    <div class="locked-block">
+      <div class="locked-content urgent">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:13px; color:var(--text); font-weight:600;">📊 Score ATS — Compatibilité filtres automatiques</div>
+          <div style="font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:800; color:var(--orange);">??%</div>
+        </div>
       </div>
+      <div class="locked-overlay">🔒</div>
     </div>
-    <div class="locked-overlay">🔒</div>
-  </div>
 
-  <div class="locked-block">
-    <div class="locked-content">
-      <div style="font-size:13px; color:#2a4a3a; font-weight:600; margin-bottom:0.5rem;">📈 Comparaison marché 2026</div>
-      <div style="font-size:11px; color:#4a6a5a; line-height:1.5;">Votre profil se situe dans le tier intermédiaire des candidats pour ce poste. Les recruteurs en 2026 recherchent principalement...</div>
-    </div>
-    <div class="locked-overlay">🔒</div>
-  </div>
-
-  <div class="locked-block">
-    <div class="locked-content">
-      <div style="font-size:13px; color:#2a4a3a; font-weight:600; margin-bottom:0.5rem;">💬 3 phrases d'accroche personnalisées</div>
-      <div style="font-size:11px; color:#4a6a5a; border-left:3px solid var(--green); padding-left:0.5rem; line-height:1.5;">Professionnel expérimenté avec plus de X années dans le domaine, je maîtrise...</div>
-    </div>
-    <div class="locked-overlay">🔒</div>
-  </div>
-
-  <div class="locked-block">
-    <div class="locked-content">
-      <div style="font-size:13px; color:#2a4a3a; font-weight:600; margin-bottom:0.5rem;">⚡ Compétences recommandées pour votre poste</div>
-      <div style="display:flex; flex-wrap:wrap; gap:0.4rem;">
-        <span style="background:rgba(29,158,117,0.1); border:0.5px solid rgba(29,158,117,0.3); color:var(--green-dark); font-size:11px; padding:3px 8px; border-radius:20px;">compétence 1</span>
-        <span style="background:rgba(29,158,117,0.1); border:0.5px solid rgba(29,158,117,0.3); color:var(--green-dark); font-size:11px; padding:3px 8px; border-radius:20px;">compétence 2</span>
-        <span style="background:rgba(232,75,69,0.08); border:0.5px solid rgba(232,75,69,0.3); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">à ajouter 1</span>
+    <div class="locked-block">
+      <div class="locked-content urgent">
+        <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">✏️ 8 modifications de lignes identifiées</div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem;">
+          <div style="font-size:11px; color:var(--red);">❌ "Responsable de l'installation électrique..."</div>
+          <div style="font-size:11px; color:var(--green);">✅ "Expert en installation et mise en service..."</div>
+          <div style="font-size:11px; color:var(--red);">❌ "Gestion des équipes sur chantier..."</div>
+          <div style="font-size:11px; color:var(--green);">✅ "Supervision et management opérationnel..."</div>
+          <div style="font-size:11px; color:var(--text-muted); font-style:italic;">+ 6 autres modifications cachées...</div>
+        </div>
       </div>
+      <div class="locked-overlay">🔒</div>
     </div>
-    <div class="locked-overlay">🔒</div>
-  </div>
 
-  <div class="locked-block">
-    <div class="locked-content">
-      <div style="font-size:13px; color:#2a4a3a; font-weight:600; margin-bottom:0.5rem;">🎤 5 questions d'entretien + conseils</div>
-      <div style="font-size:11px; color:#4a6a5a; margin-bottom:0.3rem;">❓ Pourquoi ce poste vous intéresse-t-il ?</div>
-      <div style="font-size:11px; color:#4a6a5a;">❓ Parlez-moi de votre plus grande réussite professionnelle...</div>
+    <div class="locked-block">
+      <div class="locked-content urgent">
+        <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">🔑 5 mots-clés manquants détectés</div>
+        <div style="display:flex; flex-wrap:wrap; gap:0.4rem;">
+          <span style="background:rgba(232,75,69,0.08); border:1px solid rgba(232,75,69,0.2); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">mot-clé 1</span>
+          <span style="background:rgba(232,75,69,0.08); border:1px solid rgba(232,75,69,0.2); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">mot-clé 2</span>
+          <span style="background:rgba(232,75,69,0.08); border:1px solid rgba(232,75,69,0.2); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">+ 3 cachés</span>
+        </div>
+      </div>
+      <div class="locked-overlay">🔒</div>
     </div>
-    <div class="locked-overlay">🔒</div>
-  </div>
 
-  <div class="locked-block" style="margin-bottom:1.5rem;">
-    <div class="locked-content">
-      <div style="font-size:13px; color:#2a4a3a; font-weight:600; margin-bottom:0.5rem;">📄 Lettre de motivation complète (PDF)</div>
-      <div style="font-size:11px; color:#4a6a5a; line-height:1.5;">Madame, Monsieur, C'est avec un grand enthousiasme que je vous présente ma candidature pour le poste de...</div>
+    <div class="locked-block">
+      <div class="locked-content">
+        <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">📈 Comparaison marché 2026</div>
+        <div style="font-size:11px; color:var(--text-light); line-height:1.5;">Votre profil se situe dans le tier intermédiaire des candidats pour ce poste...</div>
+      </div>
+      <div class="locked-overlay">🔒</div>
     </div>
-    <div class="locked-overlay">🔒</div>
-  </div>
 
-  <!-- Prix barré + bouton -->
-  <div class="price-box">
-    <div class="price-old">Valeur normale : 9,99€</div>
-    <div class="price-new">2,99€ <span>aujourd'hui seulement</span></div>
-  </div>
+    <div class="locked-block">
+      <div class="locked-content">
+        <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">💬 3 phrases d'accroche personnalisées</div>
+        <div style="font-size:11px; color:var(--text-light); border-left:3px solid var(--orange); padding-left:0.5rem; line-height:1.5;">Professionnel expérimenté avec plus de X années dans le domaine...</div>
+      </div>
+      <div class="locked-overlay">🔒</div>
+    </div>
 
-  <button class="improve-btn" id="improveBtn" onclick="startOptimisation()">🔓 Débloquer mon rapport complet</button>
-  <div class="pay-loading" id="payLoading">⏳ Redirection vers le paiement sécurisé...</div>
-  <div class="improve-sub">Paiement sécurisé · Une seule fois · Accès immédiat</div>
-  <span class="back-link" onclick="goBack(1)">← Recommencer</span>
+    <div class="locked-block">
+      <div class="locked-content">
+        <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">⚡ Compétences recommandées</div>
+        <div style="display:flex; flex-wrap:wrap; gap:0.4rem;">
+          <span style="background:var(--orange-light); border:1px solid rgba(255,107,26,0.3); color:var(--orange); font-size:11px; padding:3px 8px; border-radius:20px;">compétence 1</span>
+          <span style="background:var(--orange-light); border:1px solid rgba(255,107,26,0.3); color:var(--orange); font-size:11px; padding:3px 8px; border-radius:20px;">compétence 2</span>
+          <span style="background:rgba(232,75,69,0.08); border:1px solid rgba(232,75,69,0.2); color:var(--red); font-size:11px; padding:3px 8px; border-radius:20px;">à ajouter</span>
+        </div>
+      </div>
+      <div class="locked-overlay">🔒</div>
+    </div>
+
+    <div class="locked-block">
+      <div class="locked-content">
+        <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">🎤 5 questions d'entretien + conseils</div>
+        <div style="font-size:11px; color:var(--text-light); margin-bottom:0.3rem;">❓ Pourquoi ce poste vous intéresse-t-il ?</div>
+        <div style="font-size:11px; color:var(--text-light);">❓ Parlez-moi de votre plus grande réussite...</div>
+      </div>
+      <div class="locked-overlay">🔒</div>
+    </div>
+
+    <div class="locked-block" style="margin-bottom:1.5rem;">
+      <div class="locked-content">
+        <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">📄 Lettre de motivation complète (PDF)</div>
+        <div style="font-size:11px; color:var(--text-light); line-height:1.5;">Madame, Monsieur, C'est avec un grand enthousiasme que je vous présente...</div>
+      </div>
+      <div class="locked-overlay">🔒</div>
+    </div>
+
+    <div class="price-box">
+      <div class="price-old">Valeur normale : 9,99€</div>
+      <div class="price-new">2,99€ <span>aujourd'hui seulement</span></div>
+    </div>
+
+    <button class="improve-btn" id="improveBtn" onclick="startOptimisation()">🔓 Débloquer mon rapport complet</button>
+    <div class="pay-loading" id="payLoading">⏳ Redirection vers le paiement sécurisé...</div>
+    <div class="improve-sub">Paiement sécurisé · Une seule fois · Accès immédiat</div>
+    <span class="back-link" onclick="goBack()">← Recommencer</span>
+  </div>
 </div>
 
 <!-- PAGE OPT LOADING -->
 <div class="page" id="pageOptLoading">
-  <div class="loading-screen">
-    <h3>Optimisation en cours...</h3>
-    <p>Analyse approfondie de votre CV par l'IA</p>
-    <div class="progress-bar"><div class="progress-fill" id="progressFill2"></div></div>
-    <div class="loading-steps">
-      <div class="step active" id="opt1"><span>🧠</span> Analyse ATS et sections</div>
-      <div class="step" id="opt2"><span>🎯</span> Mots-clés et marché 2026</div>
-      <div class="step" id="opt3"><span>✍️</span> Modifications et compétences</div>
-      <div class="step" id="opt4"><span>📝</span> Lettre de motivation et questions</div>
+  <div class="inner-page">
+    <div class="loading-screen">
+      <h3>Optimisation en cours...</h3>
+      <p>Analyse approfondie de votre CV par l'IA</p>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill2"></div></div>
+      <div class="loading-steps">
+        <div class="step active" id="opt1"><span>🧠</span> Analyse ATS et sections</div>
+        <div class="step" id="opt2"><span>🎯</span> Mots-clés et marché 2026</div>
+        <div class="step" id="opt3"><span>✍️</span> Modifications et compétences</div>
+        <div class="step" id="opt4"><span>📝</span> Lettre de motivation et questions</div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- PAGE 3 : Rapport complet -->
+<!-- PAGE 3 -->
 <div class="page" id="page3">
-  <div class="result-header">
-    <h2>Votre rapport complet 🎯</h2>
-    <p id="poste-label3">Optimisé pour —</p>
-  </div>
-  <div class="new-score-banner">
-    <div><div class="score-val old" id="oldScoreDisplay">—</div><div class="score-lbl">Score initial</div></div>
-    <div class="score-arrow">→</div>
-    <div><div class="score-val new" id="newScoreDisplay">—</div><div class="score-lbl">Nouveau score</div></div>
-  </div>
-  <div class="ats-banner">
-    <div>
-      <div class="card-title" style="margin-bottom:0.2rem">Score ATS</div>
-      <div class="ats-label">Compatibilité filtres automatiques</div>
+  <div class="inner-page">
+    <div class="result-header">
+      <h2>Votre rapport complet 🎯</h2>
+      <p id="poste-label3">Optimisé pour —</p>
     </div>
-    <div class="ats-score" id="atsScore">—%</div>
-  </div>
-  <div class="section-divider">📊 Analyse par section</div>
-  <div class="section-grid" id="sectionGrid"></div>
-  <div class="card">
-    <div class="card-title">🔑 Mots-clés manquants</div>
-    <div id="motsCles"></div>
-  </div>
-  <div class="card">
-    <div class="card-title">📈 Comparaison marché 2026</div>
-    <p id="comparaisonMarche" style="font-size:13px; color:#4a6a5a; line-height:1.6;"></p>
-  </div>
-  <div class="section-divider">✏️ Modifications recommandées</div>
-  <div id="modifList"></div>
-  <div class="card">
-    <div class="card-title">💬 3 Phrases d'accroche — cliquez pour copier</div>
-    <div id="accrocheList"></div>
-  </div>
-  <div class="card">
-    <div class="card-title">⚡ Compétences recommandées</div>
-    <div style="margin-bottom:0.8rem">
-      <div style="font-size:11px; color:var(--text-muted); margin-bottom:0.4rem;">À METTRE EN AVANT</div>
-      <div id="compMettre" class="tag-list"></div>
+    <div class="new-score-banner">
+      <div><div class="score-val old" id="oldScoreDisplay">—</div><div class="score-lbl">Score initial</div></div>
+      <div class="score-arrow">→</div>
+      <div><div class="score-val new" id="newScoreDisplay">—</div><div class="score-lbl">Nouveau score</div></div>
     </div>
-    <div>
-      <div style="font-size:11px; color:var(--text-muted); margin-bottom:0.4rem;">À AJOUTER SI VOUS LA POSSÉDEZ</div>
-      <div id="compAjouter" class="tag-list"></div>
+    <div class="ats-banner">
+      <div>
+        <div class="card-title" style="margin-bottom:0.2rem">Score ATS</div>
+        <div class="ats-label">Compatibilité filtres automatiques</div>
+      </div>
+      <div class="ats-score" id="atsScore">—%</div>
     </div>
+    <div class="section-divider">📊 Analyse par section</div>
+    <div class="section-grid" id="sectionGrid"></div>
+    <div class="card">
+      <div class="card-title">🔑 Mots-clés manquants</div>
+      <div id="motsCles"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📈 Comparaison marché 2026</div>
+      <p id="comparaisonMarche" style="font-size:13px; color:var(--text-light); line-height:1.6;"></p>
+    </div>
+    <div class="section-divider">✏️ Modifications recommandées</div>
+    <div id="modifList"></div>
+    <div class="card">
+      <div class="card-title">💬 3 Phrases d'accroche — cliquez pour copier</div>
+      <div id="accrocheList"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚡ Compétences recommandées</div>
+      <div style="margin-bottom:0.8rem">
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:0.4rem;">À METTRE EN AVANT</div>
+        <div id="compMettre" class="tag-list"></div>
+      </div>
+      <div>
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:0.4rem;">À AJOUTER SI VOUS LA POSSÉDEZ</div>
+        <div id="compAjouter" class="tag-list"></div>
+      </div>
+    </div>
+    <div class="section-divider">🎤 Questions d'entretien probables</div>
+    <div id="questionsList"></div>
+    <div class="card">
+      <div class="card-title">📄 Lettre de motivation</div>
+      <div class="optimized-content" id="optimizedLetter"></div>
+    </div>
+    <button class="download-btn" onclick="downloadLetter()">⬇ Télécharger la lettre de motivation (PDF)</button>
+    <span class="back-link" onclick="goBack()">← Analyser un autre CV</span>
   </div>
-  <div class="section-divider">🎤 Questions d'entretien probables</div>
-  <div id="questionsList"></div>
-  <div class="card">
-    <div class="card-title">📄 Lettre de motivation</div>
-    <div class="optimized-content" id="optimizedLetter"></div>
-  </div>
-  <button class="download-btn" onclick="downloadLetter()">⬇ Télécharger la lettre de motivation (PDF)</button>
-  <span class="back-link" onclick="goBack(1)">← Analyser un autre CV</span>
 </div>
 
 <script>
@@ -452,7 +547,7 @@
       data.critiques.forEach(c => { list.innerHTML += `<div class="critique-item"><div class="critique-dot"></div><div class="critique-text">${c}</div></div>`; });
       showPage('page2');
       animateScore(data.score);
-    } catch(e) { showPage('page1'); }
+    } catch(e) { goBack(); }
   }
 
   function animateScore(target) {
@@ -573,19 +668,17 @@
   }
 
   function copyText(text) {
-    navigator.clipboard.writeText(text).then(() => {
-      alert('Phrase copiée !');
-    });
+    navigator.clipboard.writeText(text).then(() => { alert('Phrase copiée !'); });
   }
 
   function downloadLetter() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
     const W = 210;
-    const BORD = [120, 40, 50];
-    const BEIGE = [245, 238, 225];
-    const DARK = [40, 25, 30];
-    doc.setFillColor(...BEIGE);
+    const BORD = [255, 107, 26];
+    const WHITE = [255, 255, 255];
+    const DARK = [30, 30, 50];
+    doc.setFillColor(...WHITE);
     doc.rect(0, 0, W, 297, 'F');
     doc.setFillColor(...BORD);
     doc.rect(0, 0, W, 14, 'F');
@@ -595,7 +688,7 @@
     doc.text('LETTRE DE MOTIVATION', 14, 7);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
-    doc.setTextColor(240, 210, 215);
+    doc.setTextColor(255, 220, 190);
     doc.text('Poste : ' + currentPoste, 14, 12);
     const text = document.getElementById('optimizedLetter').textContent;
     doc.setTextColor(...DARK);
@@ -634,10 +727,9 @@
     window.scrollTo(0,0);
   }
 
-  function goBack(n) { showPage(n === 1 ? 'page1' : 'page' + n); }
+  function goBack() { showPage('page1'); }
   function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 4000); }
 
-  // Retour de Stripe
   window.addEventListener('load', async () => {
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get('session_id');
@@ -658,18 +750,18 @@
             const data = await r.json();
             displayResults(data);
           }
-        } catch(e) { showPage('page1'); }
+        } catch(e) { goBack(); }
       });
     }
   });
 </script>
 
-<footer style="text-align:center; padding: 2rem 1rem; border-top: 0.5px solid rgba(29,158,117,0.15); margin-top: 2rem;">
-  <p style="font-size:12px; color:#7a8f85;">
+<footer style="text-align:center; padding: 2rem 1rem; border-top: 1px solid var(--border); margin-top: 2rem; background: var(--white);">
+  <p style="font-size:12px; color:var(--text-muted);">
     © 2026 BoostMonCV &nbsp;·&nbsp;
-    <a href="/cgu.html" style="color:#0f6e56; text-decoration:underline;">CGU</a> &nbsp;·&nbsp;
-    <a href="/confidentialite.html" style="color:#0f6e56; text-decoration:underline;">Confidentialité</a> &nbsp;·&nbsp;
-    <a href="/support.html" style="color:#0f6e56; text-decoration:underline;">Support</a>
+    <a href="/cgu.html" style="color:var(--orange); text-decoration:underline;">CGU</a> &nbsp;·&nbsp;
+    <a href="/confidentialite.html" style="color:var(--orange); text-decoration:underline;">Confidentialité</a> &nbsp;·&nbsp;
+    <a href="/support.html" style="color:var(--orange); text-decoration:underline;">Support</a>
   </p>
 </footer>
 
