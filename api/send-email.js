@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { email, lettre, poste, nom } = req.body;
+  const { email, lettre, poste } = req.body;
   if (!email || !lettre) return res.status(400).json({ error: 'Données manquantes' });
 
   try {
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         from: { email: 'noreply@boostmoncv.fr', name: 'BoostMonCV' },
         to: [{ email: email }],
-        subject: `Votre lettre de motivation — ${poste}`,
+        subject: `🚀 Votre lettre de motivation — ${poste}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <div style="background: linear-gradient(135deg, #0a0f2e, #FF6B1A); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
@@ -24,11 +24,20 @@ export default async function handler(req, res) {
             <div style="background: #f4f6f9; padding: 30px; border-radius: 0 0 12px 12px;">
               <h2 style="color: #0a0f2e;">Bonjour !</h2>
               <p style="color: #6b7280;">Voici votre lettre de motivation pour le poste de <strong style="color: #FF6B1A;">${poste}</strong>.</p>
+              <p style="color: #6b7280;">Vous trouverez votre lettre complète ci-dessous ainsi qu'en pièce jointe au format texte.</p>
               <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #FF6B1A; white-space: pre-wrap; font-size: 14px; color: #374151; line-height: 1.7;">${lettre}</div>
               <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 20px;">© 2026 BoostMonCV — boostmoncv.fr</p>
             </div>
           </div>
-        `
+        `,
+        attachments: [
+          {
+            filename: `Lettre_motivation_${poste.replace(/\s/g, '_')}.txt`,
+            content: Buffer.from(lettre, 'utf-8').toString('base64'),
+            type: 'text/plain',
+            disposition: 'attachment'
+          }
+        ]
       })
     });
 
