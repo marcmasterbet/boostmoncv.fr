@@ -691,9 +691,15 @@
       doc.text(line, 16, y);
       y += 6;
     });
-    // Ouvre dans un nouvel onglet au lieu de télécharger
-    const pdfBlob = doc.output('bloburl');
-    window.open(pdfBlob, '_blank');
+    // Détection mobile
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    if(isMobile) {
+      const dataUri = doc.output('datauristring');
+      const newWindow = window.open();
+      newWindow.document.write('<iframe width="100%" height="100%" src="' + dataUri + '"></iframe>');
+    } else {
+      doc.save('Lettre_motivation.pdf');
+    }
   }
 
   function animateLoading(steps, progressId, duration, callback) {
