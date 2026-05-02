@@ -25,8 +25,6 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'DM Sans', sans-serif; background: var(--grey-bg); color: var(--text); min-height: 100vh; }
-
-  /* NAV */
   nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: rgba(10,15,46,0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,107,26,0.2); }
   .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; color: #fff; display: flex; align-items: center; gap: 8px; text-decoration: none; }
   .logo span { color: var(--orange); }
@@ -34,79 +32,36 @@
   .nav-links { display: flex; gap: 2rem; align-items: center; }
   .nav-link { font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 500; transition: color 0.2s; }
   .nav-link:hover { color: var(--orange); }
-
-  /* PAGES */
   .page { display: none; }
   .page.active { display: block; }
-
-  /* PAGE 1 - HERO GRADIENT */
-  .hero {
-    min-height: calc(100vh - 65px);
-    background: linear-gradient(135deg, var(--navy) 0%, #1a1060 40%, #8B2500 75%, var(--orange) 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 3rem 1.5rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(ellipse at 70% 60%, rgba(255,107,26,0.3) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .hero::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(ellipse at 20% 30%, rgba(10,15,46,0.8) 0%, transparent 50%);
-    pointer-events: none;
-  }
-
+  .hero { min-height: calc(100vh - 65px); background: linear-gradient(135deg, var(--navy) 0%, #1a1060 40%, #8B2500 75%, var(--orange) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 1.5rem; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 70% 60%, rgba(255,107,26,0.3) 0%, transparent 60%); pointer-events: none; }
+  .hero::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 20% 30%, rgba(10,15,46,0.8) 0%, transparent 50%); pointer-events: none; }
   .hero-inner { position: relative; z-index: 1; width: 100%; max-width: 520px; text-align: center; }
-
   .hero-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 2rem; }
   .hero-logo-icon { background: var(--orange); border-radius: 12px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 20px rgba(255,107,26,0.5); }
   .hero-logo-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem; color: #fff; }
   .hero-logo-text span { color: var(--orange); }
-
   .badge { display: inline-block; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 12px; padding: 5px 14px; border-radius: 20px; margin-bottom: 1.2rem; letter-spacing: 0.05em; backdrop-filter: blur(4px); }
-
   .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; line-height: 1.15; margin-bottom: 0.8rem; color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,0.3); }
   .hero-title span { color: var(--orange); }
-
   .hero-subtitle { font-size: 15px; color: rgba(255,255,255,0.75); margin-bottom: 2rem; line-height: 1.6; text-shadow: 0 1px 10px rgba(0,0,0,0.3); }
-
   .upload-zone { background: rgba(255,255,255,0.12); border: 2px dashed rgba(255,255,255,0.3); border-radius: 14px; padding: 1.8rem 2rem; margin-bottom: 1rem; cursor: pointer; transition: all 0.2s; text-align: center; backdrop-filter: blur(8px); }
   .upload-zone:hover { border-color: var(--orange); background: rgba(255,107,26,0.15); }
   .upload-zone.has-file { border-color: var(--orange); background: rgba(255,107,26,0.2); border-style: solid; }
   .upload-icon { font-size: 28px; margin-bottom: 0.4rem; }
   .upload-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 0.2rem; color: #fff; }
   .upload-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
-
   .input-field { width: 100%; background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 13px 16px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 15px; margin-bottom: 1rem; outline: none; transition: border 0.2s; backdrop-filter: blur(8px); }
   .input-field:focus { border-color: var(--orange); background: rgba(255,255,255,0.18); }
   .input-field::placeholder { color: rgba(255,255,255,0.5); }
-
   .cta-btn { width: 100%; background: var(--orange); color: #fff; border: none; border-radius: 10px; padding: 15px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 20px rgba(255,107,26,0.5); }
   .cta-btn:hover { background: var(--orange-dark); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,107,26,0.6); }
   .cta-btn:disabled { background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.4); cursor: not-allowed; transform: none; box-shadow: none; }
-
   .trust { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap; }
   .trust-item { font-size: 12px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 5px; }
   .trust-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); }
   .error-msg { background: rgba(232,75,69,0.2); border: 1px solid rgba(232,75,69,0.4); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #ffaaaa; margin-bottom: 1rem; display: none; }
-
-  /* PAGES INTERNES */
   .inner-page { max-width: 580px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   .loading-screen { text-align: center; padding: 3rem 1rem; }
   .loading-screen h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--navy); }
@@ -187,13 +142,14 @@
   .optimized-content { white-space: pre-wrap; font-size: 13px; line-height: 1.7; color: var(--text-light); max-height: 300px; overflow-y: auto; }
   .download-btn { width: 100%; background: var(--orange); color: #fff; border: none; border-radius: 12px; padding: 16px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-bottom: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(255,107,26,0.3); }
   .download-btn:hover { background: var(--orange-dark); transform: translateY(-1px); }
+  .download-btn:disabled { background: var(--grey-bg); color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
   .back-link { display: block; text-align: center; font-size: 13px; color: var(--orange); margin-top: 1rem; cursor: pointer; text-decoration: underline; font-weight: 500; }
   .section-divider { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--navy); margin: 1.5rem 0 0.8rem; }
-
-  @media (max-width: 768px) {
-    .nav-links { display: none; }
-    .hero { padding: 2rem 1.2rem; }
-  }
+  .email-input { width: 100%; background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; padding: 13px 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; margin-bottom: 0.8rem; outline: none; transition: border 0.2s; }
+  .email-input:focus { border-color: var(--orange); }
+  .email-input::placeholder { color: var(--text-muted); }
+  .email-status { text-align: center; font-size: 13px; margin-top: 0.5rem; display: none; padding: 8px; border-radius: 8px; }
+  @media (max-width: 768px) { .nav-links { display: none; } .hero { padding: 2rem 1.2rem; } }
 </style>
 </head>
 <body>
@@ -221,7 +177,6 @@
       <div class="badge">✨ Analyse rapide et instantanée</div>
       <h1 class="hero-title">Votre CV est-il prêt à<br><span>décrocher des entretiens ?</span></h1>
       <p class="hero-subtitle">Obtenez une analyse personnalisée de votre CV en quelques secondes. Sans inscription.</p>
-
       <div class="upload-zone" id="uploadZone" onclick="document.getElementById('cv-upload').click()">
         <input type="file" id="cv-upload" accept=".pdf" style="display:none" onchange="onFileSelected(this)">
         <div class="upload-icon" id="uploadIcon">📄</div>
@@ -276,7 +231,6 @@
       <div class="card-title">Points à améliorer</div>
       <div id="critiqueList"></div>
     </div>
-
     <div class="alert-banner">
       <div class="alert-banner-icon">⚠️</div>
       <div class="alert-banner-text">
@@ -284,31 +238,16 @@
         Notre IA a identifié des problèmes qui réduisent significativement vos chances d'être sélectionné.
       </div>
     </div>
-
     <div class="counter-grid">
-      <div class="counter-item">
-        <div class="counter-num">8</div>
-        <div class="counter-label">modifications identifiées</div>
-      </div>
-      <div class="counter-item">
-        <div class="counter-num">5</div>
-        <div class="counter-label">mots-clés manquants</div>
-      </div>
-      <div class="counter-item">
-        <div class="counter-num">3</div>
-        <div class="counter-label">phrases d'accroche</div>
-      </div>
-      <div class="counter-item">
-        <div class="counter-num">5</div>
-        <div class="counter-label">questions d'entretien</div>
-      </div>
+      <div class="counter-item"><div class="counter-num">8</div><div class="counter-label">modifications identifiées</div></div>
+      <div class="counter-item"><div class="counter-num">5</div><div class="counter-label">mots-clés manquants</div></div>
+      <div class="counter-item"><div class="counter-num">3</div><div class="counter-label">phrases d'accroche</div></div>
+      <div class="counter-item"><div class="counter-num">5</div><div class="counter-label">questions d'entretien</div></div>
     </div>
-
     <div class="unlock-header">
       <div class="unlock-title">🔒 Votre rapport complet est prêt</div>
       <div class="unlock-subtitle">Débloquez l'accès pour voir tout ce qui a été préparé pour vous</div>
     </div>
-
     <div class="locked-block">
       <div class="locked-content urgent">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -318,7 +257,6 @@
       </div>
       <div class="locked-overlay">🔒</div>
     </div>
-
     <div class="locked-block">
       <div class="locked-content urgent">
         <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">✏️ 8 modifications de lignes identifiées</div>
@@ -332,7 +270,6 @@
       </div>
       <div class="locked-overlay">🔒</div>
     </div>
-
     <div class="locked-block">
       <div class="locked-content urgent">
         <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">🔑 5 mots-clés manquants détectés</div>
@@ -344,7 +281,6 @@
       </div>
       <div class="locked-overlay">🔒</div>
     </div>
-
     <div class="locked-block">
       <div class="locked-content">
         <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">📈 Comparaison marché 2026</div>
@@ -352,7 +288,6 @@
       </div>
       <div class="locked-overlay">🔒</div>
     </div>
-
     <div class="locked-block">
       <div class="locked-content">
         <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">💬 3 phrases d'accroche personnalisées</div>
@@ -360,7 +295,6 @@
       </div>
       <div class="locked-overlay">🔒</div>
     </div>
-
     <div class="locked-block">
       <div class="locked-content">
         <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">⚡ Compétences recommandées</div>
@@ -371,7 +305,6 @@
       </div>
       <div class="locked-overlay">🔒</div>
     </div>
-
     <div class="locked-block">
       <div class="locked-content">
         <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">🎤 5 questions d'entretien + conseils</div>
@@ -380,20 +313,17 @@
       </div>
       <div class="locked-overlay">🔒</div>
     </div>
-
     <div class="locked-block" style="margin-bottom:1.5rem;">
       <div class="locked-content">
-        <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">📄 Lettre de motivation complète (PDF)</div>
+        <div style="font-size:13px; color:var(--text); font-weight:600; margin-bottom:0.5rem;">📄 Lettre de motivation complète</div>
         <div style="font-size:11px; color:var(--text-light); line-height:1.5;">Madame, Monsieur, C'est avec un grand enthousiasme que je vous présente...</div>
       </div>
       <div class="locked-overlay">🔒</div>
     </div>
-
     <div class="price-box">
       <div class="price-old">Valeur normale : 9,99€</div>
       <div class="price-new">2,99€ <span>aujourd'hui seulement</span></div>
     </div>
-
     <button class="improve-btn" id="improveBtn" onclick="startOptimisation()">🔓 Débloquer mon rapport complet</button>
     <div class="pay-loading" id="payLoading">⏳ Redirection vers le paiement sécurisé...</div>
     <div class="improve-sub">Paiement sécurisé · Une seule fois · Accès immédiat</div>
@@ -470,7 +400,15 @@
       <div class="card-title">📄 Lettre de motivation</div>
       <div class="optimized-content" id="optimizedLetter"></div>
     </div>
-    <button class="download-btn" onclick="downloadLetter()">⬇ Télécharger la lettre de motivation (PDF)</button>
+
+    <!-- EMAIL SECTION -->
+    <div class="card">
+      <div class="card-title">📧 Recevoir ma lettre par email</div>
+      <input class="email-input" type="email" id="emailInput" placeholder="Votre email — ex: jean@gmail.com">
+      <button class="download-btn" id="emailBtn" onclick="sendLetterByEmail()">📧 Envoyer ma lettre par email</button>
+      <div class="email-status" id="emailStatus"></div>
+    </div>
+
     <span class="back-link" onclick="goBack()">← Analyser un autre CV</span>
   </div>
 </div>
@@ -573,6 +511,50 @@
     }
   }
 
+  async function sendLetterByEmail() {
+    const email = document.getElementById('emailInput').value.trim();
+    const status = document.getElementById('emailStatus');
+    const btn = document.getElementById('emailBtn');
+    if(!email || !email.includes('@')) {
+      status.style.display = 'block';
+      status.style.background = 'rgba(232,75,69,0.08)';
+      status.style.color = 'var(--red)';
+      status.textContent = '⚠️ Entrez un email valide';
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = '⏳ Envoi en cours...';
+    status.style.display = 'none';
+    try {
+      const r = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          email,
+          lettre: document.getElementById('optimizedLetter').textContent,
+          poste: currentPoste
+        })
+      });
+      const data = await r.json();
+      if(data.success) {
+        status.style.display = 'block';
+        status.style.background = 'rgba(29,158,117,0.08)';
+        status.style.color = 'var(--green)';
+        status.textContent = '✅ Email envoyé ! Vérifiez votre boîte mail.';
+        btn.textContent = '✅ Email envoyé !';
+      } else {
+        throw new Error();
+      }
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = '📧 Envoyer ma lettre par email';
+      status.style.display = 'block';
+      status.style.background = 'rgba(232,75,69,0.08)';
+      status.style.color = 'var(--red)';
+      status.textContent = '❌ Erreur. Réessayez.';
+    }
+  }
+
   function getNoteClass(note) {
     if(note >= 7) return 'note-good';
     if(note >= 5) return 'note-mid';
@@ -584,7 +566,6 @@
     document.getElementById('newScoreDisplay').textContent = data.newScore + '/100';
     document.getElementById('poste-label3').textContent = 'Optimisé pour ' + currentPoste;
     document.getElementById('atsScore').textContent = data.scoreATS + '%';
-
     const grid = document.getElementById('sectionGrid');
     grid.innerHTML = '';
     if(data.analyseSections) {
@@ -600,16 +581,13 @@
         }
       });
     }
-
     const mc = document.getElementById('motsCles');
     mc.innerHTML = '<div class="tag-list">';
     if(data.motsClesManquants) {
       data.motsClesManquants.forEach(m => { mc.innerHTML += `<span class="tag missing">${m}</span>`; });
     }
     mc.innerHTML += '</div>';
-
     document.getElementById('comparaisonMarche').textContent = data.comparaisonMarche || '';
-
     const modif = document.getElementById('modifList');
     modif.innerHTML = '';
     if(data.modifications) {
@@ -621,7 +599,6 @@
         </div>`;
       });
     }
-
     const acc = document.getElementById('accrocheList');
     acc.innerHTML = '';
     if(data.phrasesAccroche) {
@@ -632,7 +609,6 @@
         </div>`;
       });
     }
-
     const cm = document.getElementById('compMettre');
     const ca = document.getElementById('compAjouter');
     cm.innerHTML = '';
@@ -641,7 +617,6 @@
       (data.competencesRecommandees.aMettre || []).forEach(c => { cm.innerHTML += `<span class="tag">${c}</span>`; });
       (data.competencesRecommandees.aAjouter || []).forEach(c => { ca.innerHTML += `<span class="tag missing">${c}</span>`; });
     }
-
     const ql = document.getElementById('questionsList');
     ql.innerHTML = '';
     if(data.questionsEntretien) {
@@ -652,54 +627,12 @@
         </div>`;
       });
     }
-
     document.getElementById('optimizedLetter').textContent = data.lettre || '';
     showPage('page3');
   }
 
   function copyText(text) {
     navigator.clipboard.writeText(text).then(() => { alert('Phrase copiée !'); });
-  }
-
-  function downloadLetter() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-    const W = 210;
-    const BORD = [255, 107, 26];
-    const WHITE = [255, 255, 255];
-    const DARK = [30, 30, 50];
-    doc.setFillColor(...WHITE);
-    doc.rect(0, 0, W, 297, 'F');
-    doc.setFillColor(...BORD);
-    doc.rect(0, 0, W, 14, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
-    doc.text('LETTRE DE MOTIVATION', 14, 7);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(255, 220, 190);
-    doc.text('Poste : ' + currentPoste, 14, 12);
-    const text = document.getElementById('optimizedLetter').textContent;
-    doc.setTextColor(...DARK);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    const lines = doc.splitTextToSize(text, 178);
-    let y = 24;
-    lines.forEach(line => {
-      if(y > 284) { doc.addPage(); y = 20; }
-      doc.text(line, 16, y);
-      y += 6;
-    });
-    // Détection mobile
-    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    if(isMobile) {
-      const dataUri = doc.output('datauristring');
-      const newWindow = window.open();
-      newWindow.document.write('<iframe width="100%" height="100%" src="' + dataUri + '"></iframe>');
-    } else {
-      doc.save('Lettre_motivation.pdf');
-    }
   }
 
   function animateLoading(steps, progressId, duration, callback) {
