@@ -691,7 +691,9 @@
       doc.text(line, 16, y);
       y += 6;
     });
-    doc.save('Lettre_motivation.pdf');
+    // Ouvre dans un nouvel onglet au lieu de télécharger
+    const pdfBlob = doc.output('bloburl');
+    window.open(pdfBlob, '_blank');
   }
 
   function animateLoading(steps, progressId, duration, callback) {
