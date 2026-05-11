@@ -61,7 +61,7 @@
   .trust { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap; }
   .trust-item { font-size: 12px; color: rgba(255,255,255,0.6); display: flex; align-items: center; gap: 5px; }
   .trust-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); }
-  .error-msg { background: rgba(232,75,69,0.2); border: 1px solid rgba(232,75,69,0.4); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #ffaaaa; margin-bottom: 1rem; display: none; }
+  .error-msg { background: rgba(232,75,69,0.3); border: 2px solid rgba(232,75,69,0.8); border-radius: 12px; padding: 16px 18px; font-size: 14px; color: #ffffff; margin-bottom: 1rem; display: none; font-weight: 600; line-height: 1.6; text-align: center; }
   .inner-page { max-width: 580px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   .loading-screen { text-align: center; padding: 3rem 1rem; }
   .loading-screen h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--navy); }
@@ -400,15 +400,12 @@
       <div class="card-title">📄 Lettre de motivation</div>
       <div class="optimized-content" id="optimizedLetter"></div>
     </div>
-
-    <!-- EMAIL SECTION -->
     <div class="card">
       <div class="card-title">📧 Recevoir ma lettre par email</div>
       <input class="email-input" type="email" id="emailInput" placeholder="Votre email — ex: jean@gmail.com">
       <button class="download-btn" id="emailBtn" onclick="sendLetterByEmail()">📧 Envoyer ma lettre par email</button>
       <div class="email-status" id="emailStatus"></div>
     </div>
-
     <span class="back-link" onclick="goBack()">← Analyser un autre CV</span>
   </div>
 </div>
@@ -460,22 +457,54 @@
 
   async function startAnalysis() {
     currentPoste = document.getElementById('poste').value.trim();
+    // Cacher le message d'erreur précédent
+    document.getElementById('errorMsg').style.display = 'none';
     showPage('pageLoading');
     animateLoading(['step1','step2','step3','step4'], 'progressFill', 2500, runAnalysis);
   }
 
   async function runAnalysis() {
     try {
-      const r = await fetch('/api/analyze', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cvText, poste: currentPoste}) });
+      const r = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({cvText, poste: currentPoste})
+      });
       const data = await r.json();
+
+      // Poste invalide — afficher message et rester sur page 1
+      if(data.erreur === 'poste_invalide') {
+        showPage('page1');
+        const errEl = document.getElementById('errorMsg');
+        errEl.innerHTML = '⚠️ ' + data.message;
+        errEl.style.display = 'block';
+        // Scroll vers le message
+        errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // Vérifier données valides
+      if(!data.score || !data.critiques) {
+        showPage('page1');
+        showError('Une erreur est survenue lors de l\'analyse. Veuillez réessayer.');
+        return;
+      }
+
       currentScore = data.score;
       document.getElementById('poste-label').textContent = 'Pour le poste de ' + currentPoste;
       const list = document.getElementById('critiqueList');
       list.innerHTML = '';
-      data.critiques.forEach(c => { list.innerHTML += `<div class="critique-item"><div class="critique-dot"></div><div class="critique-text">${c}</div></div>`; });
+      data.critiques.forEach(c => {
+        list.innerHTML += `<div class="critique-item"><div class="critique-dot"></div><div class="critique-text">${c}</div></div>`;
+      });
       showPage('page2');
       animateScore(data.score);
-    } catch(e) { goBack(); }
+
+    } catch(e) {
+      console.error('Erreur analyse:', e);
+      showPage('page1');
+      showError('Une erreur est survenue. Veuillez réessayer.');
+    }
   }
 
   function animateScore(target) {
@@ -542,9 +571,7 @@
         status.style.color = 'var(--green)';
         status.textContent = '✅ Email envoyé ! Vérifiez votre boîte mail.';
         btn.textContent = '✅ Email envoyé !';
-      } else {
-        throw new Error();
-      }
+      } else { throw new Error(); }
     } catch(e) {
       btn.disabled = false;
       btn.textContent = '📧 Envoyer ma lettre par email';
@@ -659,7 +686,13 @@
   }
 
   function goBack() { showPage('page1'); }
-  function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 4000); }
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.innerHTML = msg;
+    el.style.display = 'block';
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => el.style.display = 'none', 8000);
+  }
 
   window.addEventListener('load', async () => {
     const params = new URLSearchParams(window.location.search);
